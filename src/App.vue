@@ -4,8 +4,15 @@ import NavBar from './components/Templates/NavBar.vue'
 </script>
 
 <template>
-  <NavBar />
-  <HomeView />
+  <main>
+    <NavBar />
+    <HomeView />
+  </main>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+main {
+  min-height: 100vh;
+  width: 100%;
+}
+</style>

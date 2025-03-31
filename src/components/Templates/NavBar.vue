@@ -8,6 +8,7 @@
 </template>
 
 <style lang="scss" scoped>
+@import '../../assets/styles/main.scss';
 .header {
   display: flex;
   flex-direction: row;
@@ -15,10 +16,13 @@
   justify-content: space-between;
   width: 100%;
   height: 3rem;
+  padding: 1rem 2rem;
+  border-bottom: 2px solid $color-black;
 
   &_title {
     font-size: 2rem;
     font-weight: 600;
+    color: $color-black;
   }
 
   &_links {

@@ -22,8 +22,9 @@ const tasks = computed(() =>
 </template>
 
 <style lang="scss" scoped>
+@import '../../assets/styles/main.scss';
 .column {
-  background: #f4f4f4;
+  background: $color-white;
   padding: 15px;
   border-radius: 8px;
   width: 250px;
