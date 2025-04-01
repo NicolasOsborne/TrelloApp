@@ -1,4 +1,9 @@
-export type TaskStatus = 'À Faire' | 'En Cours' | 'À Approuver' | 'Terminé'
+export enum TaskStatus {
+  toDo = 'À Faire',
+  inProgress = 'En Cours',
+  toApprove = 'À Approuver',
+  done = 'Terminé',
+}
 
 export interface Task {
   id: number

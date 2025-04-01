@@ -1,42 +1,23 @@
 <script setup lang="ts">
 import { useStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
-import type { TaskStatus } from '../../types/types'
+import { TaskStatus } from '../../types/types'
+import CTAButton from '../Atoms/CTAButton.vue'
 
 const store = useStore()
-const statuses: TaskStatus[] = ['À Faire', 'En Cours', 'À Approuver', 'Terminé']
+const statuses = Object.values(TaskStatus)
 
 const addTask = () => {
   const title = prompt('Nouvelle tâche :')
   if (title) store.addTask(title)
 }
-
-const columnClass = (status: TaskStatus) => {
-  switch (status) {
-    case 'À Faire':
-      return 'column-toDo'
-    case 'En Cours':
-      return 'column-inProgress'
-    case 'À Approuver':
-      return 'column-toApprove'
-    case 'Terminé':
-      return 'column-done'
-    default:
-      return ''
-  }
-}
 </script>
 
 <template>
   <section class="kanban">
-    <button @click="addTask">Nouvelle tâche</button>
+    <CTAButton :action="addTask" content="+ Ajouter une tâche" />
     <div class="columns">
-      <Column
-        v-for="status in statuses"
-        :key="status"
-        :status="status"
-        :class="columnClass(status)"
-      />
+      <Column v-for="status in statuses" :key="status" :status="status" />
     </div>
   </section>
 </template>
@@ -53,21 +34,5 @@ const columnClass = (status: TaskStatus) => {
   display: flex;
   gap: 20px;
   margin-top: 20px;
-
-  .column-toDo {
-    background-color: $color-primary;
-  }
-
-  .column-inProgress {
-    background-color: $color-secondary;
-  }
-
-  .column-toApprove {
-    background-color: $color-tertiary;
-  }
-
-  .column-done {
-    background-color: $color-quarternary;
-  }
 }
 </style>

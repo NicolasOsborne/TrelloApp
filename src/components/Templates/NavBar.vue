@@ -2,7 +2,7 @@
 
 <template>
   <header class="header">
-    <h1 class="header_title">TrelloApp</h1>
+    <h1 class="header_title">My To-Do List</h1>
     <div class="header_links"></div>
   </header>
 </template>
@@ -14,7 +14,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  // width: 100%;
   height: 3rem;
   padding: 1rem 2rem;
   border-bottom: 2px solid $color-black;

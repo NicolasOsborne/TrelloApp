@@ -19,11 +19,12 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 99px;
-  padding: 0.5rem;
-  background-color: $color-white;
-  color: $color-red;
-  border: 1px solid $color-red;
+  border-radius: 8px;
+  padding: 0.5rem 0.55rem;
+  background-color: $color-red;
+  color: $color-black;
+  border: 1px solid $color-black;
+  box-shadow: $box-shadow;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 
@@ -32,9 +33,8 @@ const props = defineProps<{
   }
 
   &:hover {
-    border: 1px solid $color-white;
-    background-color: $color-red;
-    color: $color-white;
+    transform: translate($box-shadow-x, $box-shadow-y);
+    box-shadow: none;
   }
 }
 </style>

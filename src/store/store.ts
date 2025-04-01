@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Task, TaskStatus } from '../types/types'
+import { TaskStatus, type Task } from '../types/types'
 
 export const useStore = defineStore('store', {
   state: () => ({
@@ -7,7 +7,7 @@ export const useStore = defineStore('store', {
   }),
   actions: {
     addTask(title: string) {
-      this.tasks.push({ id: Date.now(), title, status: 'À Faire' })
+      this.tasks.push({ id: Date.now(), title, status: TaskStatus.toDo })
     },
     moveTask(id: number, newStatus: TaskStatus) {
       const task = this.tasks.find((t: any) => t.id === id)

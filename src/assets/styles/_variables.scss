@@ -5,7 +5,16 @@ $color-white: #f1eff7;
 $color-red: #f34646;
 $color-green: #5fdd68;
 
-$color-primary: #FAA381;
-$color-secondary: #e8e157;
-$color-tertiary: #C9DBBA;
-$color-quarternary: #75DBCD;
+$color-primary: #fa8181;
+$color-secondary: #ffc527;
+$color-tertiary: #b9ff80;
+$color-quarternary: #72f5e3;
+
+// Box-shadow
+$box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+$box-shadow-x: 4px;
+$box-shadow-y: 4px;
+
+// Fonts
+$font-body: 'Space Grotesk', sans-serif;
+$font-title: 'Unbounded', sans-serif;

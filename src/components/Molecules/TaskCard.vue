@@ -1,12 +1,20 @@
 <script setup lang="ts">
 import { useStore } from '../../store/store'
-import type { Task, TaskStatus } from '../../types/types'
-import ActionButton from '../Atoms/ActionButton.vue'
+import type { Task } from '../../types/types'
+import { TaskStatus } from '../../types/types'
+
+import CardButton from '../Atoms/CardButton.vue'
+import Select from '../Atoms/Select.vue'
 
 const props = defineProps<{ task: Task }>()
 const store = useStore()
 
-const statuses: TaskStatus[] = ['À Faire', 'En Cours', 'À Approuver', 'Terminé']
+const statuses = Object.values(TaskStatus)
+
+const statusOptions = statuses.map((status) => ({
+  label: status,
+  value: status,
+}))
 
 const moveTask = (newStatus: TaskStatus) => {
   store.moveTask(props.task.id, newStatus)
@@ -19,19 +27,17 @@ const removeTask = () => {
 
 <template>
   <div class="taskCard">
-    <p>{{ task.title }}</p>
-    <select
-      :value="task.status"
-      @change="
-        moveTask(($event.target as HTMLSelectElement).value as TaskStatus)
-      "
-    >
-      <option v-for="status in statuses" :key="status" :value="status">
-        {{ status }}
-      </option>
-    </select>
-    <div class="actions">
-      <ActionButton content="bi bi-trash" :action="removeTask" />
+    <p class="taskCard_title">{{ task.title }}</p>
+    <div class="taskCard_content">
+      <Select
+        v-model="task.status"
+        :options="statusOptions"
+        label="Statut :"
+        @update:value="moveTask"
+      />
+      <div class="actions">
+        <CardButton content="bi bi-trash" :action="removeTask" />
+      </div>
     </div>
   </div>
 </template>
@@ -39,13 +45,26 @@ const removeTask = () => {
 <style lang="scss" scoped>
 @import '../../assets/styles/main.scss';
 .taskCard {
-  background: $color-white;
+  width: 100%;
+  background-color: white;
   padding: 10px;
   border-radius: 6px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid $color-black;
+  box-shadow: $box-shadow;
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  &_title {
+    font-weight: 500;
+  }
+
+  &_content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 select {
