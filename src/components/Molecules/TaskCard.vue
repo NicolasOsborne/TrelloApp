@@ -2,8 +2,7 @@
 import { useStore } from '../../store/store'
 import type { Task } from '../../types/types'
 import { TaskStatus } from '../../types/types'
-
-import CardButton from '../Atoms/CardButton.vue'
+import BaseButton from '../Atoms/BaseButton.vue'
 import Select from '../Atoms/Select.vue'
 
 const props = defineProps<{ task: Task }>()
@@ -36,17 +35,16 @@ const removeTask = () => {
         @update:value="moveTask"
       />
       <div class="actions">
-        <CardButton content="bi bi-trash" :action="removeTask" />
+        <BaseButton icon="bi bi-trash" :action="removeTask" variant="card" />
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
 .taskCard {
   width: 100%;
-  background-color: white;
+  background-color: $color-background;
   padding: 10px;
   border-radius: 6px;
   border: 2px solid $color-black;

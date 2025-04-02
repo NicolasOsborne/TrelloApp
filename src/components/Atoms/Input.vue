@@ -11,7 +11,6 @@ const props = defineProps<{
 </template>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
 input {
    width: 75%;
    height: 2rem;

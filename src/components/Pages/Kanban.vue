@@ -2,7 +2,7 @@
 import { useStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
 import { TaskStatus } from '../../types/types'
-import CTAButton from '../Atoms/CTAButton.vue'
+import BaseButton from '../Atoms/BaseButton.vue'
 
 const store = useStore()
 const statuses = Object.values(TaskStatus)
@@ -15,7 +15,8 @@ const addTask = () => {
 
 <template>
   <section class="kanban">
-    <CTAButton :action="addTask" content="+ Ajouter une tâche" />
+    <BaseButton content="+ Ajouter une tâche" :action="addTask" variant="cta" />
+
     <div class="columns">
       <Column v-for="status in statuses" :key="status" :status="status" />
     </div>
@@ -23,16 +24,17 @@ const addTask = () => {
 </template>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
-
 .kanban {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .columns {
+  width: 100%;
   display: flex;
-  gap: 20px;
+  flex-direction: row;
+  justify-content: space-evenly;
   margin-top: 20px;
 }
 </style>

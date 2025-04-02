@@ -10,8 +10,7 @@ import NavBar from './components/Templates/NavBar.vue'
   </main>
 </template>
 
-<style lang="scss" scoped>
-@import './assets/styles/main.scss';
+<style lang="scss">
 main {
   min-height: 100vh;
   width: 100%;

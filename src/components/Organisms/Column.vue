@@ -40,7 +40,6 @@ const columnClass = (status: TaskStatus) => {
 </template>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
 .column {
   display: flex;
   flex-direction: column;

@@ -32,7 +32,6 @@ const onChange = (event: Event) => {
 </template>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/main.scss';
 .select-wrapper {
   display: flex;
   flex-direction: column;
