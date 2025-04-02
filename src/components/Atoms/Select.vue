@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   modelValue: string
   options: Array<{ label: string; value: string }>
   label?: string
@@ -16,10 +16,10 @@ const onChange = (event: Event) => {
 
 <template>
   <div class="select-wrapper">
-    <label v-if="props.label" :for="props.id">{{ props.label }}</label>
-    <select :value="props.modelValue" @change="onChange">
+    <label v-if="label" :for="id">{{ label }}</label>
+    <select :value="modelValue" @change="onChange">
       <option
-        v-for="option in props.options"
+        v-for="option in options"
         :key="option.value"
         :value="option.value"
       >

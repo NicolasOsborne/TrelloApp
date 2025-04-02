@@ -5,7 +5,7 @@ const props = defineProps<{
   content?: string
   icon?: string
   action: () => void
-  variant?: 'cta' | 'card'
+  variant?: 'cta' | 'card-remove' | 'card-edit'
 }>()
 </script>
 
@@ -41,14 +41,22 @@ const props = defineProps<{
   font-weight: 500;
 }
 
-.card {
+.card-remove,
+.card-edit {
   padding: 0.5rem 0.55rem;
-  background-color: $color-red;
   color: $color-black;
   border: 1px solid $color-black;
 
   i {
     font-size: 1rem;
   }
+}
+
+.card-remove {
+  background-color: $color-red;
+}
+
+.card-edit {
+  background-color: $color-orange;
 }
 </style>

@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useStore } from '../../store/store'
 import type { Task } from '../../types/types'
 import { TaskStatus } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Select from '../Atoms/Select.vue'
+import Modal from './Modal.vue'
+import Input from '../Atoms/Input.vue'
 
 const props = defineProps<{ task: Task }>()
 const store = useStore()
@@ -14,6 +17,21 @@ const statusOptions = statuses.map((status) => ({
   label: status,
   value: status,
 }))
+
+const isModalOpen = ref(false)
+const editedTitle = ref(props.task.title)
+const editedStatus = ref(props.task.status)
+
+const openEditModal = () => {
+  editedTitle.value = props.task.title
+  editedStatus.value = props.task.status
+  isModalOpen.value = true
+}
+
+const saveUpdatedTask = () => {
+  store.editTask(props.task.id, editedTitle.value, editedStatus.value)
+  isModalOpen.value = false
+}
 
 const moveTask = (newStatus: TaskStatus) => {
   store.moveTask(props.task.id, newStatus)
@@ -36,10 +54,25 @@ const removeTask = () => {
       />
 
       <div class="actions">
-        <BaseButton icon="bi bi-trash" :action="removeTask" variant="card" />
+        <BaseButton
+          icon="bi bi-pen"
+          :action="openEditModal"
+          variant="card-edit"
+        />
+        <BaseButton
+          icon="bi bi-trash"
+          :action="removeTask"
+          variant="card-remove"
+        />
       </div>
     </div>
   </div>
+  <Modal :show="isModalOpen" @close="isModalOpen = false">
+    <h3 class="modalTitle">Modifier la tâche :</h3>
+    <Input v-model="editedTitle" label="Titre :" />
+    <Select v-model="editedStatus" :options="statusOptions" label="Statut :" />
+    <BaseButton content="Modifier" :action="saveUpdatedTask" variant="cta" />
+  </Modal>
 </template>
 
 <style lang="scss" scoped>
@@ -78,5 +111,6 @@ select {
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 </style>

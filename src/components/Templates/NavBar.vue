@@ -2,7 +2,7 @@
 
 <template>
   <header class="header">
-    <h1 class="header_title">My To-Do List</h1>
+    <h1 class="header_title">My Tasks</h1>
     <div class="header_links"></div>
   </header>
 </template>

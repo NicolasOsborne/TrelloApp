@@ -21,6 +21,13 @@ const statusOptions = statuses.map((status) => ({
   value: status,
 }))
 
+const tasksByStatus = computed(() => {
+  return statuses.map((status) => ({
+    status,
+    tasks: store.tasks.filter((task) => task.status === status),
+  }))
+})
+
 const openModal = () => {
   isModalOpen.value = true
 }
@@ -32,13 +39,6 @@ const saveTask = () => {
     isModalOpen.value = false
   }
 }
-
-const tasksByStatus = computed(() => {
-  return statuses.map((status) => ({
-    status,
-    tasks: store.tasks.filter((task) => task.status === status),
-  }))
-})
 </script>
 
 <template>

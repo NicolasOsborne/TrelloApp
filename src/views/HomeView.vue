@@ -10,7 +10,6 @@ import Kanban from '../components/Pages/Kanban.vue'
 </template>
 
 <style lang="scss" scoped>
-@import '../assets/styles/main.scss';
 .home {
   width: 100%;
   height: 100%;

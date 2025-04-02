@@ -18,5 +18,12 @@ export const useStore = defineStore('store', {
     removeTask(id: number) {
       this.tasks = this.tasks.filter((task) => task.id !== id)
     },
+    editTask(id: number, title: string, status: TaskStatus) {
+      const task = this.tasks.find((task) => task.id === id)
+      if (task) {
+        task.title = title
+        task.status = status
+      }
+    },
   },
 })

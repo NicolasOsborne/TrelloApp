@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   label: string
-  placeholder: string
+  placeholder?: string
   modelValue: string
 }>()
 
@@ -12,6 +12,7 @@ const emit = defineEmits(['update:modelValue'])
   <div class="input_wrapper">
     <label class="input_label" for="input">{{ label }}</label>
     <input
+      :value="modelValue"
       :placeholder="placeholder"
       name="input"
       @input="
