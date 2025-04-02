@@ -2,13 +2,13 @@
 import { computed } from 'vue'
 import { useStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
-import type { TaskStatus } from '../../types/types'
+import type { Task, TaskStatus } from '../../types/types'
 
-const props = defineProps<{ status: TaskStatus }>()
+const props = defineProps<{ status: TaskStatus; tasks: Task[] }>()
 const store = useStore()
 
 const tasks = computed(() =>
-  store.tasks.filter((t: any) => t.status === props.status)
+  store.tasks.filter((task: any) => task.status === props.status)
 )
 
 const columnClass = (status: TaskStatus) => {

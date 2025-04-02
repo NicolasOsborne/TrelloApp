@@ -32,8 +32,9 @@ const removeTask = () => {
         v-model="task.status"
         :options="statusOptions"
         label="Statut :"
-        @update:value="moveTask"
+        @update:modelValue="moveTask"
       />
+
       <div class="actions">
         <BaseButton icon="bi bi-trash" :action="removeTask" variant="card" />
       </div>
