@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useStore } from '../../store/store'
+import { taskStore } from '../../store/store'
 import type { Task } from '../../types/types'
 import { TaskStatus } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
@@ -9,7 +9,7 @@ import Modal from './Modal.vue'
 import Input from '../Atoms/Input.vue'
 
 const props = defineProps<{ task: Task }>()
-const store = useStore()
+const store = taskStore()
 
 const statuses = Object.values(TaskStatus)
 
@@ -29,7 +29,7 @@ const openEditModal = () => {
 }
 
 const saveUpdatedTask = () => {
-  store.editTask(props.task.id, editedTitle.value, editedStatus.value)
+  store.updateTask(props.task.id, editedTitle.value, editedStatus.value)
   isModalOpen.value = false
 }
 

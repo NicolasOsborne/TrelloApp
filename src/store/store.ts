@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { TaskStatus, type Task } from '../types/types'
 
-export const useStore = defineStore('store', {
+export const taskStore = defineStore('store', {
   state: () => ({
     tasks: [] as Task[],
   }),
@@ -18,7 +18,7 @@ export const useStore = defineStore('store', {
     removeTask(id: number) {
       this.tasks = this.tasks.filter((task) => task.id !== id)
     },
-    editTask(id: number, title: string, status: TaskStatus) {
+    updateTask(id: number, title: string, status: TaskStatus) {
       const task = this.tasks.find((task) => task.id === id)
       if (task) {
         task.title = title
