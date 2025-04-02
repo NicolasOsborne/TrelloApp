@@ -38,8 +38,7 @@ const onChange = (event: Event) => {
   gap: 0.5rem;
 
   label {
-    font-family: $font-title;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   select {
