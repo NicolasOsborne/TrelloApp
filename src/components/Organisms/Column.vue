@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useStore } from '../../store/store'
+import { taskStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
 import type { Task, TaskStatus } from '../../types/types'
 
 const props = defineProps<{ status: TaskStatus; tasks: Task[] }>()
-const store = useStore()
+const store = taskStore()
 
 const tasks = computed(() =>
   store.tasks.filter((task: any) => task.status === props.status)

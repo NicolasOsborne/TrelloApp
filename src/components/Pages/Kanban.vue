@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useStore } from '../../store/store'
+import { taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
 import { TaskStatus } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
@@ -8,7 +8,7 @@ import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
 import Select from '../Atoms/Select.vue'
 
-const store = useStore()
+const store = taskStore()
 
 // Convertir la liste enum en array pour l'utiliser dans la boucle v-for
 const statuses = Object.values(TaskStatus)
