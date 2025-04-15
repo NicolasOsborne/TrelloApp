@@ -3,14 +3,13 @@ import { taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
 import { TaskStatus } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
 import Select from '../Atoms/Select.vue'
 
 const store = taskStore()
 
-// Convertir la liste enum en array pour l'utiliser dans la boucle v-for
 const statuses = Object.values(TaskStatus)
 
 const isModalOpen = ref(false)
@@ -26,6 +25,10 @@ const tasksByStatus = computed(() => {
     status,
     tasks: store.tasks.filter((task) => task.status === status),
   }))
+})
+
+onMounted(() => {
+  store.loadTasks()
 })
 
 const openModal = () => {

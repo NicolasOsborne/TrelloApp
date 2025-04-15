@@ -43,7 +43,7 @@ const props = defineProps<{
 
 .card-remove,
 .card-edit {
-  padding: 0.5rem 0.55rem;
+  padding: 0.5rem 0.5rem;
   color: $color-black;
   border: 1px solid $color-black;
 
