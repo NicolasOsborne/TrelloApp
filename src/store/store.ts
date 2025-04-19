@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { TaskStatus, type Task } from '../types/types'
+import { Role, TaskStatus, type Column, type Task } from '../types/types'
 
-export const taskStore = defineStore('store', {
+export const taskStore = defineStore('taskStore', {
   state: () => ({
     tasks: [] as Task[],
   }),
@@ -15,8 +15,13 @@ export const taskStore = defineStore('store', {
     saveTasks() {
       localStorage.setItem('tasks', JSON.stringify(this.tasks))
     },
-    addTask(title: string, status: TaskStatus) {
-      const newTask = { id: Date.now(), title, status }
+    addTask(
+      title: string,
+      status: TaskStatus,
+      description: string,
+      role: Role
+    ) {
+      const newTask = { id: Date.now(), title, status, description, role }
       this.tasks = [...this.tasks, newTask]
       this.saveTasks()
     },
@@ -36,6 +41,47 @@ export const taskStore = defineStore('store', {
       if (taskIndex !== -1) {
         this.tasks[taskIndex] = { ...this.tasks[taskIndex], title, status }
         this.saveTasks()
+      }
+    },
+  },
+})
+
+export const columnStore = defineStore('columnStore', {
+  state: () => ({
+    columns: [] as Column[],
+  }),
+  actions: {
+    loadColumns() {
+      const storedColumns = localStorage.getItem('columns')
+      if (storedColumns) {
+        this.columns = JSON.parse(storedColumns)
+      } else {
+        this.columns = [
+          { id: Date.now(), name: 'À Faire' },
+          { id: Date.now() + 1, name: 'En Cours' },
+          { id: Date.now() + 2, name: 'À Approuver' },
+          { id: Date.now() + 3, name: 'Terminé' },
+        ]
+        this.saveColumns()
+      }
+    },
+    saveColumns() {
+      localStorage.setItem('columns', JSON.stringify(this.columns))
+    },
+    addColumn(columnName: string) {
+      const newColumn = { id: Date.now(), name: columnName }
+      this.columns.push(newColumn)
+      this.saveColumns()
+    },
+    removeColumn(id: number) {
+      this.columns = this.columns.filter((column) => column.id !== id)
+      this.saveColumns()
+    },
+    updateColumn(id: number, name: string) {
+      const columnIndex = this.columns.findIndex((column) => column.id === id)
+      if (columnIndex !== -1) {
+        this.columns[columnIndex] = { ...this.columns[columnIndex], name }
+        this.saveColumns()
       }
     },
   },

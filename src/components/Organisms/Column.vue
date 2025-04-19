@@ -2,16 +2,18 @@
 import { computed } from 'vue'
 import { taskStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
-import type { Task, TaskStatus } from '../../types/types'
+import type { Task } from '../../types/types'
+import BaseButton from '../Atoms/BaseButton.vue'
 
-const props = defineProps<{ status: TaskStatus; tasks: Task[] }>()
+const props = defineProps<{ status: string; tasks: Task[] }>()
+const emit = defineEmits(['removeColumn', 'editColumn'])
 const store = taskStore()
 
 const tasks = computed(() =>
   store.tasks.filter((task: any) => task.status === props.status)
 )
 
-const columnClass = (status: TaskStatus) => {
+const columnClass = (status: string) => {
   switch (status) {
     case 'À Faire':
       return 'column-toDo'
@@ -25,12 +27,31 @@ const columnClass = (status: TaskStatus) => {
       return ''
   }
 }
+
+const removeColumn = () => {
+  emit('removeColumn')
+}
+
+const editColumn = () => {
+  const newName = prompt('Enter new column name:', props.status)
+  if (newName) {
+    emit('editColumn', newName)
+  }
+}
 </script>
 
 <template>
   <div class="column">
-    <div :class="columnClass(status)">
-      <h3>{{ status }}</h3>
+    <div :class="columnClass(props.status)">
+      <h3>{{ props.status }}</h3>
+      <div class="columnButtons">
+        <BaseButton icon="bi bi-pen" :action="editColumn" variant="card-edit" />
+        <BaseButton
+          icon="bi bi-trash"
+          :action="removeColumn"
+          variant="card-remove"
+        />
+      </div>
     </div>
 
     <div class="taskList">
@@ -44,7 +65,7 @@ const columnClass = (status: TaskStatus) => {
   display: flex;
   flex-direction: column;
   background: $color-white;
-  padding: 15px;
+  margin: 15px;
   width: 250px;
 
   &-toDo,
@@ -55,8 +76,10 @@ const columnClass = (status: TaskStatus) => {
     border-radius: 8px;
     box-shadow: $box-shadow;
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    padding: 0 1rem;
   }
 
   &-toDo {
@@ -75,6 +98,13 @@ const columnClass = (status: TaskStatus) => {
     background-color: $color-quarternary;
   }
 }
+
+.columnButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
 .taskList {
   margin-top: 20px;
   display: flex;

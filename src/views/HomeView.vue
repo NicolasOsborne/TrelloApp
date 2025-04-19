@@ -4,7 +4,6 @@ import Kanban from '../components/Pages/Kanban.vue'
 
 <template>
   <section class="home">
-    <h2>Liste des tâches</h2>
     <Kanban />
   </section>
 </template>

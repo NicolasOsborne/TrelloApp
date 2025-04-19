@@ -1,19 +1,29 @@
 <script setup lang="ts">
-import { taskStore } from '../../store/store'
+import { columnStore, taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
-import { TaskStatus } from '../../types/types'
+import { Role, TaskStatus } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import { computed, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
 import Select from '../Atoms/Select.vue'
 
-const store = taskStore()
+const taskStoreInstance = taskStore()
+const columnStoreInstance = columnStore()
 
 const statuses = Object.values(TaskStatus)
 
-const isModalOpen = ref(false)
-const task = ref({ title: '', status: TaskStatus.toDo })
+const isTaskModalOpen = ref(false)
+const isColumnModalOpen = ref(false)
+
+const task = ref({
+  title: '',
+  status: TaskStatus.toDo,
+  description: '',
+  role: Role.frontend,
+})
+
+const newColumnName = ref('')
 
 const statusOptions = statuses.map((status) => ({
   label: status,
@@ -23,35 +33,74 @@ const statusOptions = statuses.map((status) => ({
 const tasksByStatus = computed(() => {
   return statuses.map((status) => ({
     status,
-    tasks: store.tasks.filter((task) => task.status === status),
+    tasks: taskStoreInstance.tasks.filter((task) => task.status === status),
   }))
 })
 
 onMounted(() => {
-  store.loadTasks()
+  taskStoreInstance.loadTasks()
+  columnStoreInstance.loadColumns()
 })
 
-const openModal = () => {
-  isModalOpen.value = true
+const openTaskModal = () => {
+  isTaskModalOpen.value = true
+}
+
+const openColumnModal = () => {
+  isColumnModalOpen.value = true
 }
 
 const saveTask = () => {
   if (task.value.title.trim() !== '') {
-    store.addTask(task.value.title, task.value.status)
-    task.value = { title: '', status: TaskStatus.toDo }
-    isModalOpen.value = false
+    taskStoreInstance.addTask(
+      task.value.title,
+      task.value.status,
+      task.value.description,
+      task.value.role
+    )
+    task.value = {
+      title: '',
+      status: TaskStatus.toDo,
+      description: '',
+      role: Role.frontend,
+    }
+    isTaskModalOpen.value = false
   }
+}
+
+const saveColumn = () => {
+  if (newColumnName.value.trim() !== '') {
+    columnStoreInstance.addColumn(newColumnName.value)
+    newColumnName.value = ''
+    isColumnModalOpen.value = false
+  }
+}
+
+const removeColumn = (id: number) => {
+  columnStoreInstance.removeColumn(id)
+}
+
+const editColumn = (id: number, name: string) => {
+  columnStoreInstance.updateColumn(id, name)
 }
 </script>
 
 <template>
   <section class="kanban">
-    <BaseButton
-      content="+ Ajouter une tâche"
-      :action="openModal"
-      variant="cta"
-    />
-    <Modal :show="isModalOpen" @close="isModalOpen = false">
+    <div class="kanbanButtons">
+      <BaseButton
+        content="Nouvelle tâche"
+        :action="openTaskModal"
+        variant="cta"
+      />
+      <BaseButton
+        content="Nouvelle colonne"
+        :action="openColumnModal"
+        variant="cta"
+      />
+    </div>
+
+    <Modal :show="isTaskModalOpen" @close="isTaskModalOpen = false">
       <h3 class="modalTitle">Nouvelle tâche :</h3>
       <Input
         v-model="task.title"
@@ -62,12 +111,31 @@ const saveTask = () => {
       <BaseButton content="Créer la tâche" :action="saveTask" variant="cta" />
     </Modal>
 
+    <Modal :show="isColumnModalOpen" @close="isColumnModalOpen = false">
+      <h3 class="modalTitle">Nouvelle colonne :</h3>
+      <Input
+        v-model="newColumnName"
+        label="Nom de la colonne :"
+        placeholder="Nom de la nouvelle colonne..."
+      />
+      <BaseButton
+        content="Créer la colonne"
+        :action="saveColumn"
+        variant="cta"
+      />
+    </Modal>
+
     <div class="columns">
       <Column
-        v-for="{ status, tasks } in tasksByStatus"
-        :key="status"
-        :status="status"
-        :tasks="tasks"
+        v-for="column in columnStoreInstance.columns"
+        :key="column.id"
+        :status="column.name"
+        :tasks="
+          tasksByStatus.find((taskGroup) => taskGroup.status === column.name)
+            ?.tasks || []
+        "
+        @removeColumn="removeColumn(column.id)"
+        @editColumn="editColumn(column.id, column.name)"
       />
     </div>
   </section>
@@ -79,6 +147,14 @@ const saveTask = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 2rem;
+}
+
+.kanbanButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4rem;
 }
 .columns {
   width: 100%;
