@@ -23,7 +23,7 @@ export interface Task {
   id: number
   title: string
   checklist: ChecklistItem[]
-  status: TaskStatus
+  status: string
   role: Role
   date: string
 }

@@ -24,7 +24,7 @@ export const taskStore = defineStore('taskStore', {
     addTask(
       title: string,
       checklist: ChecklistItem[],
-      status: TaskStatus,
+      status: string,
       role: Role,
       date: string
     ) {
@@ -47,7 +47,7 @@ export const taskStore = defineStore('taskStore', {
       id: number,
       title: string,
       checklist: ChecklistItem[],
-      status: TaskStatus,
+      status: string,
       role: Role,
       date: string
     ) {
@@ -95,8 +95,15 @@ export const columnStore = defineStore('columnStore', {
       this.saveColumns()
     },
     removeColumn(id: number) {
-      this.columns = this.columns.filter((column) => column.id !== id)
-      this.saveColumns()
+      const column = this.columns.find((c) => c.id === id)
+      if (column) {
+        taskStore().tasks = taskStore().tasks.filter(
+          (task) => task.status !== column.name
+        )
+        this.columns = this.columns.filter((c) => c.id !== id)
+        this.saveColumns()
+        taskStore().saveTasks()
+      }
     },
     updateColumn(id: number, name: string) {
       const columnIndex = this.columns.findIndex((column) => column.id === id)

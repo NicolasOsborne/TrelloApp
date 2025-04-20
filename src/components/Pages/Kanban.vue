@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { columnStore, taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
-import { Role, TaskStatus } from '../../types/types'
+import { Role, type ChecklistItem } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import { computed, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
@@ -12,36 +12,43 @@ import Checklist from '../Molecules/Checklist.vue'
 const taskStoreInstance = taskStore()
 const columnStoreInstance = columnStore()
 
-const statuses = Object.values(TaskStatus)
-const roles = Object.values(Role)
-
 const isTaskModalOpen = ref(false)
 const isColumnModalOpen = ref(false)
 
-const task = ref({
+const task = ref<{
+  title: string
+  checklist: ChecklistItem[]
+  status: string
+  role: Role
+  date: string
+}>({
   title: '',
   checklist: [],
-  status: TaskStatus.toDo,
+  status: '',
   role: Role.frontend,
   date: '',
 })
 
 const newColumnName = ref('')
 
-const statusOptions = statuses.map((status) => ({
-  label: status,
-  value: status,
-}))
+const statusOptions = computed(() => {
+  return columnStoreInstance.columns.map((column) => ({
+    label: column.name,
+    value: column.name,
+  }))
+})
 
-const roleOptions = roles.map((role) => ({
+const roleOptions = Object.values(Role).map((role) => ({
   label: role,
   value: role,
 }))
 
 const tasksByStatus = computed(() => {
-  return statuses.map((status) => ({
-    status,
-    tasks: taskStoreInstance.tasks.filter((task) => task.status === status),
+  return columnStoreInstance.columns.map((column) => ({
+    status: column.name,
+    tasks: taskStoreInstance.tasks.filter(
+      (task) => task.status === column.name
+    ),
   }))
 })
 
@@ -59,7 +66,7 @@ const openColumnModal = () => {
 }
 
 const saveTask = () => {
-  if (task.value.title.trim() !== '') {
+  if (task.value.title.trim() !== '' && task.value.status) {
     taskStoreInstance.addTask(
       task.value.title,
       task.value.checklist,
@@ -70,7 +77,7 @@ const saveTask = () => {
     task.value = {
       title: '',
       checklist: [],
-      status: TaskStatus.toDo,
+      status: '',
       role: Role.frontend,
       date: '',
     }
@@ -94,7 +101,7 @@ const editColumn = ({ id, newName }: { id: number; newName: string }) => {
   columnStoreInstance.updateColumn(id, newName)
 }
 
-const updateChecklist = (updatedChecklist) => {
+const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   task.value.checklist = updatedChecklist
 }
 </script>
@@ -121,7 +128,7 @@ const updateChecklist = (updatedChecklist) => {
         label="Titre :"
         placeholder="Titre de la nouvelle tâche..."
       />
-      <Checklist :checklist="task.checklist" @onUpdate="updateChecklist" />
+      <Checklist :checklist="task.checklist" :onUpdate="updateChecklist" />
       <Select v-model="task.status" :options="statusOptions" label="Statut :" />
       <Select v-model="task.role" :options="roleOptions" label="Rôle :" />
       <Input v-model="task.date" type="date" label="Date d'échéance :" />

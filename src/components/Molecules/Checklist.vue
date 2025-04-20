@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { ChecklistItem } from '../../types/types'
 
-const props = defineProps({
-  checklist: {
-    type: Array,
-    required: true,
-  },
-  onUpdate: {
-    type: Function,
-    required: true,
-  },
-})
+const props = defineProps<{
+  checklist: ChecklistItem[]
+  onUpdate: (checklist: ChecklistItem[]) => void
+}>()
 
 const newItem = ref('')
 

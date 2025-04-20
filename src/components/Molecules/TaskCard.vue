@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { taskStore } from '../../store/store'
-import type { Task } from '../../types/types'
+import { columnStore, taskStore } from '../../store/store'
+import type { ChecklistItem, Task } from '../../types/types'
 import { Role, TaskStatus } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Select from '../Atoms/Select.vue'
@@ -12,13 +12,16 @@ import Checklist from './Checklist.vue'
 const props = defineProps<{ task: Task }>()
 const store = taskStore()
 
-const statuses = Object.values(TaskStatus)
-const roles = Object.values(Role)
+const columnStoreInstance = columnStore()
 
-const statusOptions = statuses.map((status) => ({
-  label: status,
-  value: status,
-}))
+const statusOptions = computed(() => {
+  return columnStoreInstance.columns.map((column) => ({
+    label: column.name,
+    value: column.name,
+  }))
+})
+
+const roles = Object.values(Role)
 
 const roleOptions = roles.map((role) => ({
   label: role,
@@ -29,7 +32,7 @@ const isEditTaskModalOpen = ref(false)
 const isDeleteTaskModalOpen = ref(false)
 
 const editedTitle = ref(props.task.title)
-const editedChecklist = ref(props.task.checklist)
+const editedChecklist = ref<ChecklistItem[]>(props.task.checklist)
 const editedStatus = ref(props.task.status)
 const editedRole = ref(props.task.role)
 const editedDate = ref(props.task.date)
@@ -85,8 +88,8 @@ const removeTask = () => {
   store.removeTask(props.task.id)
 }
 
-const updateChecklist = (updatedChecklist) => {
-  task.value.checklist = updatedChecklist
+const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
+  editedChecklist.value = updatedChecklist
 }
 </script>
 
@@ -115,7 +118,7 @@ const updateChecklist = (updatedChecklist) => {
   <Modal :show="isEditTaskModalOpen" @close="isEditTaskModalOpen = false">
     <h3 class="modalTitle">Modifier la tâche :</h3>
     <Input v-model="editedTitle" label="Titre :" />
-    <Checklist :checklist="task.checklist" @onUpdate="updateChecklist" />
+    <Checklist :checklist="editedChecklist" :onUpdate="updateChecklist" />
     <Select v-model="editedStatus" :options="statusOptions" label="Statut :" />
     <Select v-model="editedRole" :options="roleOptions" label="Rôle :" />
     <Input v-model="editedDate" type="date" label="Date d'échéance :" />
