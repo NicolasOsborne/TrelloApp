@@ -97,12 +97,13 @@ export const columnStore = defineStore('columnStore', {
     removeColumn(id: number) {
       const column = this.columns.find((c) => c.id === id)
       if (column) {
-        taskStore().tasks = taskStore().tasks.filter(
+        const taskStoreInstance = taskStore()
+        taskStoreInstance.tasks = taskStoreInstance.tasks.filter(
           (task) => task.status !== column.name
         )
         this.columns = this.columns.filter((c) => c.id !== id)
+        taskStoreInstance.saveTasks()
         this.saveColumns()
-        taskStore().saveTasks()
       }
     },
     updateColumn(id: number, name: string) {
