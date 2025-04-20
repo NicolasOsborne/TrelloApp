@@ -101,7 +101,7 @@ export const columnStore = defineStore('columnStore', {
     updateColumn(id: number, name: string) {
       const columnIndex = this.columns.findIndex((column) => column.id === id)
       if (columnIndex !== -1) {
-        this.columns[columnIndex] = { ...this.columns[columnIndex], name }
+        this.columns[columnIndex].name = name
         this.saveColumns()
       }
     },

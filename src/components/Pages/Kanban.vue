@@ -90,8 +90,8 @@ const removeColumn = (id: number) => {
   columnStoreInstance.removeColumn(id)
 }
 
-const editColumn = (id: number, name: string) => {
-  columnStoreInstance.updateColumn(id, name)
+const editColumn = ({ id, newName }: { id: number; newName: string }) => {
+  columnStoreInstance.updateColumn(id, newName)
 }
 
 const updateChecklist = (updatedChecklist) => {
@@ -146,13 +146,14 @@ const updateChecklist = (updatedChecklist) => {
       <Column
         v-for="column in columnStoreInstance.columns"
         :key="column.id"
+        :id="column.id"
         :status="column.name"
         :tasks="
           tasksByStatus.find((taskGroup) => taskGroup.status === column.name)
             ?.tasks || []
         "
         @removeColumn="removeColumn(column.id)"
-        @editColumn="editColumn(column.id, column.name)"
+        @editColumn="editColumn"
       />
     </div>
   </section>

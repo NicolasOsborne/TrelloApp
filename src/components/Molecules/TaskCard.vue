@@ -25,7 +25,9 @@ const roleOptions = roles.map((role) => ({
   value: role,
 }))
 
-const isModalOpen = ref(false)
+const isEditTaskModalOpen = ref(false)
+const isDeleteTaskModalOpen = ref(false)
+
 const editedTitle = ref(props.task.title)
 const editedChecklist = ref(props.task.checklist)
 const editedStatus = ref(props.task.status)
@@ -45,14 +47,22 @@ const checklistProgress = computed(() => {
   return `${completed}/${total}`
 })
 
-const openEditModal = () => {
+const openEditTaskModal = () => {
   editedTitle.value = props.task.title
   editedChecklist.value = props.task.checklist
   editedStatus.value = props.task.status
   editedRole.value = props.task.role
   editedDate.value = props.task.date
 
-  isModalOpen.value = true
+  isEditTaskModalOpen.value = true
+}
+
+const openDeleteTaskModal = () => {
+  isDeleteTaskModalOpen.value = true
+}
+
+const closeDeleteTaskModal = () => {
+  isDeleteTaskModalOpen.value = false
 }
 
 const saveUpdatedTask = () => {
@@ -64,7 +74,7 @@ const saveUpdatedTask = () => {
     editedRole.value,
     editedDate.value
   )
-  isModalOpen.value = false
+  isEditTaskModalOpen.value = false
 }
 
 const moveTask = (newStatus: TaskStatus) => {
@@ -91,18 +101,18 @@ const updateChecklist = (updatedChecklist) => {
       <div class="actions">
         <BaseButton
           icon="bi bi-pen"
-          :action="openEditModal"
+          :action="openEditTaskModal"
           variant="card-edit"
         />
         <BaseButton
           icon="bi bi-trash"
-          :action="removeTask"
+          :action="openDeleteTaskModal"
           variant="card-remove"
         />
       </div>
     </div>
   </div>
-  <Modal :show="isModalOpen" @close="isModalOpen = false">
+  <Modal :show="isEditTaskModalOpen" @close="isEditTaskModalOpen = false">
     <h3 class="modalTitle">Modifier la tâche :</h3>
     <Input v-model="editedTitle" label="Titre :" />
     <Checklist :checklist="task.checklist" @onUpdate="updateChecklist" />
@@ -110,6 +120,18 @@ const updateChecklist = (updatedChecklist) => {
     <Select v-model="editedRole" :options="roleOptions" label="Rôle :" />
     <Input v-model="editedDate" type="date" label="Date d'échéance :" />
     <BaseButton content="Modifier" :action="saveUpdatedTask" variant="cta" />
+  </Modal>
+
+  <Modal :show="isDeleteTaskModalOpen" @close="isDeleteTaskModalOpen = false">
+    <h3 class="modalTitle">
+      Êtes-vous sûrs de vouloir supprimer cette tâche ?
+    </h3>
+    <BaseButton content="Supprimer" :action="removeTask" variant="cta" />
+    <BaseButton
+      content="Annuler"
+      :action="closeDeleteTaskModal"
+      variant="cta"
+    />
   </Modal>
 </template>
 
