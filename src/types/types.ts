@@ -14,12 +14,18 @@ export enum Role {
   scrum = 'Scrum Master',
 }
 
+export interface ChecklistItem {
+  text: string
+  completed: boolean
+}
+
 export interface Task {
   id: number
   title: string
-  description: string
-  role: Role
+  checklist: ChecklistItem[]
   status: TaskStatus
+  role: Role
+  date: string
 }
 
 export interface TaskList {

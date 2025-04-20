@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { Role, TaskStatus, type Column, type Task } from '../types/types'
+import {
+  Role,
+  TaskStatus,
+  type ChecklistItem,
+  type Column,
+  type Task,
+} from '../types/types'
 
 export const taskStore = defineStore('taskStore', {
   state: () => ({
@@ -17,11 +23,12 @@ export const taskStore = defineStore('taskStore', {
     },
     addTask(
       title: string,
+      checklist: ChecklistItem[],
       status: TaskStatus,
-      description: string,
-      role: Role
+      role: Role,
+      date: string
     ) {
-      const newTask = { id: Date.now(), title, status, description, role }
+      const newTask = { id: Date.now(), title, checklist, status, role, date }
       this.tasks = [...this.tasks, newTask]
       this.saveTasks()
     },
@@ -36,10 +43,24 @@ export const taskStore = defineStore('taskStore', {
       this.tasks = this.tasks.filter((task) => task.id !== id)
       this.saveTasks()
     },
-    updateTask(id: number, title: string, status: TaskStatus) {
+    updateTask(
+      id: number,
+      title: string,
+      checklist: ChecklistItem[],
+      status: TaskStatus,
+      role: Role,
+      date: string
+    ) {
       const taskIndex = this.tasks.findIndex((task) => task.id === id)
       if (taskIndex !== -1) {
-        this.tasks[taskIndex] = { ...this.tasks[taskIndex], title, status }
+        this.tasks[taskIndex] = {
+          ...this.tasks[taskIndex],
+          title,
+          checklist,
+          status,
+          role,
+          date,
+        }
         this.saveTasks()
       }
     },

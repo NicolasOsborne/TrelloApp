@@ -7,20 +7,23 @@ import { computed, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
 import Select from '../Atoms/Select.vue'
+import Checklist from '../Molecules/Checklist.vue'
 
 const taskStoreInstance = taskStore()
 const columnStoreInstance = columnStore()
 
 const statuses = Object.values(TaskStatus)
+const roles = Object.values(Role)
 
 const isTaskModalOpen = ref(false)
 const isColumnModalOpen = ref(false)
 
 const task = ref({
   title: '',
+  checklist: [],
   status: TaskStatus.toDo,
-  description: '',
   role: Role.frontend,
+  date: '',
 })
 
 const newColumnName = ref('')
@@ -28,6 +31,11 @@ const newColumnName = ref('')
 const statusOptions = statuses.map((status) => ({
   label: status,
   value: status,
+}))
+
+const roleOptions = roles.map((role) => ({
+  label: role,
+  value: role,
 }))
 
 const tasksByStatus = computed(() => {
@@ -54,15 +62,17 @@ const saveTask = () => {
   if (task.value.title.trim() !== '') {
     taskStoreInstance.addTask(
       task.value.title,
+      task.value.checklist,
       task.value.status,
-      task.value.description,
-      task.value.role
+      task.value.role,
+      task.value.date
     )
     task.value = {
       title: '',
+      checklist: [],
       status: TaskStatus.toDo,
-      description: '',
       role: Role.frontend,
+      date: '',
     }
     isTaskModalOpen.value = false
   }
@@ -82,6 +92,10 @@ const removeColumn = (id: number) => {
 
 const editColumn = (id: number, name: string) => {
   columnStoreInstance.updateColumn(id, name)
+}
+
+const updateChecklist = (updatedChecklist) => {
+  task.value.checklist = updatedChecklist
 }
 </script>
 
@@ -107,7 +121,10 @@ const editColumn = (id: number, name: string) => {
         label="Titre :"
         placeholder="Titre de la nouvelle tâche..."
       />
+      <Checklist :checklist="task.checklist" @onUpdate="updateChecklist" />
       <Select v-model="task.status" :options="statusOptions" label="Statut :" />
+      <Select v-model="task.role" :options="roleOptions" label="Rôle :" />
+      <Input v-model="task.date" type="date" label="Date d'échéance :" />
       <BaseButton content="Créer la tâche" :action="saveTask" variant="cta" />
     </Modal>
 
