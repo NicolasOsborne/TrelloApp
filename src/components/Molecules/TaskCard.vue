@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { taskStore } from '../../store/store'
 import type { Task } from '../../types/types'
 import { Role, TaskStatus } from '../../types/types'
@@ -38,6 +38,12 @@ const daysRemaining = () => {
   const timeDiff = dueDate.getTime() - today.getTime()
   return Math.ceil(timeDiff / (1000 * 3600 * 24))
 }
+
+const checklistProgress = computed(() => {
+  const total = props.task.checklist.length
+  const completed = props.task.checklist.filter((item) => item.completed).length
+  return `${completed}/${total}`
+})
 
 const openEditModal = () => {
   editedTitle.value = props.task.title
@@ -78,13 +84,8 @@ const updateChecklist = (updatedChecklist) => {
   <div class="taskCard">
     <p class="taskCard_title">{{ task.title }}</p>
     <div class="taskCard_content">
-      <Select
-        v-model="task.status"
-        :options="statusOptions"
-        label="Statut :"
-        @update:modelValue="moveTask"
-      />
-
+      <p class="taskCard_status">{{ task.status }}</p>
+      <p class="taskCard_checklistProgress">{{ checklistProgress }}</p>
       <p class="taskCard_dueDate">{{ daysRemaining() }} jours</p>
 
       <div class="actions">
@@ -107,6 +108,7 @@ const updateChecklist = (updatedChecklist) => {
     <Checklist :checklist="task.checklist" @onUpdate="updateChecklist" />
     <Select v-model="editedStatus" :options="statusOptions" label="Statut :" />
     <Select v-model="editedRole" :options="roleOptions" label="Rôle :" />
+    <Input v-model="editedDate" type="date" label="Date d'échéance :" />
     <BaseButton content="Modifier" :action="saveUpdatedTask" variant="cta" />
   </Modal>
 </template>
