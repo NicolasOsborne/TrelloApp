@@ -2,14 +2,14 @@
 import { computed, ref } from 'vue'
 import { columnStore, taskStore } from '../../store/store'
 import type { ChecklistItem, Task } from '../../types/types'
-import { Role, TaskStatus } from '../../types/types'
+import { Role } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Select from '../Atoms/Select.vue'
 import Modal from './Modal.vue'
 import Input from '../Atoms/Input.vue'
 import Checklist from './Checklist.vue'
 
-const props = defineProps<{ task: Task }>()
+const props = defineProps<{ task: Task; statusColor: string }>()
 const store = taskStore()
 
 const columnStoreInstance = columnStore()
@@ -27,6 +27,17 @@ const roleOptions = roles.map((role) => ({
   label: role,
   value: role,
 }))
+
+const roleStyles = {
+  [Role.frontend]: { initials: 'FE', color: '#a9a2ff' },
+  [Role.backend]: { initials: 'BA', color: '#ff9ab0' },
+  [Role.fullStack]: { initials: 'FS', color: '#ffa2fa' },
+  [Role.designer]: { initials: 'UX', color: '#fa8181' },
+  [Role.owner]: { initials: 'PO', color: '#b9ff80' },
+  [Role.scrum]: { initials: 'SM', color: '#72f5e3' },
+}
+
+const roleStyle = computed(() => roleStyles[props.task.role])
 
 const isEditTaskModalOpen = ref(false)
 const isDeleteTaskModalOpen = ref(false)
@@ -94,14 +105,15 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
 </script>
 
 <template>
-  <div class="taskCard" :data-id="task.id" v-bind="$attrs">
-    <p class="taskCard_title">{{ task.title }}</p>
-    <div class="taskCard_content">
-      <p class="taskCard_status">{{ task.status }}</p>
-      <p class="taskCard_checklistProgress">{{ checklistProgress }}</p>
-      <p class="taskCard_dueDate">{{ daysRemaining() }} jours</p>
-
-      <div class="actions">
+  <div class="taskCard" :data-id="task.id">
+    <div class="taskCard_header">
+      <div
+        class="taskCard_header-status"
+        :style="{ backgroundColor: statusColor }"
+      >
+        {{ task.status }}
+      </div>
+      <div class="taskCard_header-actions">
         <BaseButton
           icon="bi bi-pen"
           :action="openEditTaskModal"
@@ -114,14 +126,46 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
         />
       </div>
     </div>
+    <p class="taskCard_title">{{ task.title }}</p>
+    <div class="taskCard_info">
+      <div class="taskCard_info-progress">
+        <i class="bi bi-check2-square"></i>
+        <span class="taskCard_info-progress-text">{{ checklistProgress }}</span>
+      </div>
+      <div class="taskCard_info-date">
+        <i class="bi bi-hourglass"></i>
+        <span class="taskCard_info-date-text">{{ daysRemaining() }} jours</span>
+      </div>
+      <div
+        class="taskCard_info-role"
+        :style="{ backgroundColor: roleStyle.color }"
+      >
+        {{ roleStyle.initials }}
+      </div>
+    </div>
   </div>
   <Modal :show="isEditTaskModalOpen" @close="isEditTaskModalOpen = false">
     <h3 class="modalTitle">Modifier la tâche :</h3>
     <Input v-model="editedTitle" label="Titre :" />
-    <Checklist :checklist="editedChecklist" :onUpdate="updateChecklist" />
-    <Select v-model="editedStatus" :options="statusOptions" label="Statut :" />
-    <Select v-model="editedRole" :options="roleOptions" label="Rôle :" />
-    <Input v-model="editedDate" type="date" label="Date d'échéance :" />
+    <Checklist
+      :checklist="editedChecklist"
+      :onUpdate="updateChecklist"
+      label="Checklist :"
+    />
+    <div class="modal-selects">
+      <Select
+        v-model="editedStatus"
+        :options="statusOptions"
+        label="Statut :"
+      />
+      <Select v-model="editedRole" :options="roleOptions" label="Rôle :" />
+    </div>
+    <Input
+      v-model="editedDate"
+      type="date"
+      label="Date d'échéance :"
+      class="modal-dateSelect"
+    />
     <BaseButton content="Modifier" :action="saveUpdatedTask" variant="cta" />
   </Modal>
 
@@ -150,15 +194,68 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   flex-direction: column;
   gap: 5px;
 
-  &_title {
-    font-weight: 600;
-  }
-
-  &_content {
+  &_header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    &-status {
+      padding: 0.25rem 0.5rem;
+      border: 1px solid $color-black;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    &-actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+  }
+
+  &_title {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  &_info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    &-progress {
+      padding: 0.5rem;
+      border: 1px solid $color-black;
+      border-radius: 4px;
+      background-color: $color-green;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    &-date {
+      padding: 0.5rem;
+      border: 1px solid $color-black;
+      border-radius: 4px;
+      background-color: $color-tertiary;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    &-role {
+      padding: 0.5rem;
+      border-radius: 99%;
+      border: 1px solid $color-black;
+      background-color: $color-secondary;
+      font-weight: 600;
+    }
   }
 }
 
@@ -166,14 +263,5 @@ select {
   padding: 5px;
   border-radius: 4px;
   width: max-content;
-}
-.actions {
-  margin-top: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
 }
 </style>

@@ -16,6 +16,8 @@
   height: 3rem;
   padding: 1rem 2rem;
   border-bottom: 2px solid $color-black;
+  border-top: 2px solid $color-black;
+  background-color: $color-white;
 
   &_title {
     font-size: 2rem;

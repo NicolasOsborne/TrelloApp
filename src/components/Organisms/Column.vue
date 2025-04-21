@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue'
-import { taskStore } from '../../store/store'
+import { computed, ref } from 'vue'
+import { columnStore, taskStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
 import type { Task } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
@@ -10,10 +10,12 @@ import Draggable from 'vuedraggable'
 
 const props = defineProps<{ id: number; status: string; tasks: Task[] }>()
 const emit = defineEmits(['removeColumn', 'editColumn'])
-const store = taskStore()
+
+const taskStoreInstance = taskStore()
+const columnStoreInstance = columnStore()
 
 const tasks = computed(() =>
-  store.tasks.filter((task: any) => task.status === props.status)
+  taskStoreInstance.tasks.filter((task: any) => task.status === props.status)
 )
 
 const isEditColumnModalOpen = ref(false)
@@ -32,9 +34,16 @@ const columnClass = (status: string) => {
     case 'Terminé':
       return 'column-done'
     default:
-      return ''
+      return 'column-new'
   }
 }
+
+const columnColor = computed(() => {
+  const column = columnStoreInstance.columns.find(
+    (c) => c.name === props.status
+  )
+  return column ? column.color : '#FFFFFF'
+})
 
 const openEditColumnModal = () => {
   columnNewName.value = props.status
@@ -62,19 +71,14 @@ const removeColumn = () => {
   emit('removeColumn', props.id)
   closeDeleteColumnModal()
 }
-
-const onDrop = (event: any) => {
-  const movedTask: Task = event?.item ? event.item._underlying_vm_ : null
-
-  if (movedTask) {
-    store.moveTask(movedTask.id, props.status)
-  }
-}
 </script>
 
 <template>
   <div class="column">
-    <div :class="columnClass(props.status)">
+    <div
+      :class="columnClass(props.status)"
+      :style="{ backgroundColor: columnColor }"
+    >
       <h3>{{ props.status }}</h3>
       <div class="columnButtons">
         <BaseButton
@@ -90,11 +94,14 @@ const onDrop = (event: any) => {
       </div>
     </div>
 
-    <Draggable :list="tasks" item-key="id" @change="onDrop">
-      <template #item="{ element }">
-        <TaskCard :task="element" />
-      </template>
-    </Draggable>
+    <div class="taskList">
+      <TaskCard
+        v-for="task in tasks"
+        :key="task.id"
+        :task="task"
+        :statusColor="columnColor"
+      />
+    </div>
   </div>
 
   <Modal :show="isEditColumnModalOpen" @close="closeEditColumnModal">
@@ -127,16 +134,21 @@ const onDrop = (event: any) => {
 .column {
   display: flex;
   flex-direction: column;
-  background: $color-white;
-  margin: 15px;
-  width: 250px;
-  height: 400px;
+  gap: 1rem;
+  background-color: $color-white;
+  padding: 1rem;
+  min-width: 300px;
+  min-height: 400px;
+  border-radius: 8px;
+  box-shadow: $box-shadow;
+  border: 2px solid $color-black;
+  margin-bottom: 5rem;
 
   &-toDo,
   &-inProgress,
   &-toApprove,
-  &-done {
-    width: 100%;
+  &-done,
+  &-new {
     border-radius: 8px;
     box-shadow: $box-shadow;
     display: flex;
@@ -146,21 +158,25 @@ const onDrop = (event: any) => {
     padding: 0 1rem;
   }
 
-  &-toDo {
-    background-color: $color-primary;
-  }
+  // &-toDo {
+  //   background-color: $color-primary;
+  // }
 
-  &-inProgress {
-    background-color: $color-secondary;
-  }
+  // &-inProgress {
+  //   background-color: $color-secondary;
+  // }
 
-  &-toApprove {
-    background-color: $color-tertiary;
-  }
+  // &-toApprove {
+  //   background-color: $color-tertiary;
+  // }
 
-  &-done {
-    background-color: $color-quarternary;
-  }
+  // &-done {
+  //   background-color: $color-quarternary;
+  // }
+
+  // &-new {
+  //   background-color: $color-green;
+  // }
 }
 
 .columnButtons {
@@ -170,11 +186,11 @@ const onDrop = (event: any) => {
 }
 
 .taskList {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 1rem;
+  padding: 0 1rem;
 }
 </style>

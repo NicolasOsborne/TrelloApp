@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import {
   Role,
-  TaskStatus,
   type ChecklistItem,
   type Column,
   type Task,
@@ -81,10 +80,10 @@ export const columnStore = defineStore('columnStore', {
         this.columns = JSON.parse(storedColumns)
       } else {
         this.columns = [
-          { id: Date.now(), name: 'À Faire' },
-          { id: Date.now() + 1, name: 'En Cours' },
-          { id: Date.now() + 2, name: 'À Approuver' },
-          { id: Date.now() + 3, name: 'Terminé' },
+          { id: Date.now(), name: 'À Faire', color: '#fa8181' },
+          { id: Date.now() + 1, name: 'En Cours', color: '#ffc527' },
+          { id: Date.now() + 2, name: 'À Approuver', color: '#b9ff80' },
+          { id: Date.now() + 3, name: 'Terminé', color: '#72f5e3' },
         ]
         this.saveColumns()
       }
@@ -93,7 +92,11 @@ export const columnStore = defineStore('columnStore', {
       localStorage.setItem('columns', JSON.stringify(this.columns))
     },
     addColumn(columnName: string) {
-      const newColumn = { id: Date.now(), name: columnName }
+      const newColumn = {
+        id: Date.now(),
+        name: columnName,
+        color: getRandomColor(),
+      }
       this.columns.push(newColumn)
       this.saveColumns()
     },
@@ -118,3 +121,18 @@ export const columnStore = defineStore('columnStore', {
     },
   },
 })
+
+const colors = [
+  '#fa8181',
+  '#ffc527',
+  '#b9ff80',
+  '#72f5e3',
+  '#a9a2ff',
+  '#ffa2fa',
+  '#ff9ab0',
+]
+
+const getRandomColor = () => {
+  const randomIndex = Math.floor(Math.random() * colors.length)
+  return colors[randomIndex]
+}

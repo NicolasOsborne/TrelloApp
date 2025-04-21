@@ -14,6 +14,5 @@ import NavBar from './components/Templates/NavBar.vue'
 main {
   min-height: 100vh;
   width: 100%;
-  background-color: $color-white;
 }
 </style>

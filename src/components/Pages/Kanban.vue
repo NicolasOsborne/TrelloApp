@@ -133,9 +133,20 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
         label="Titre :"
         placeholder="Titre de la nouvelle tâche..."
       />
-      <Checklist :checklist="task.checklist" :onUpdate="updateChecklist" />
-      <Select v-model="task.status" :options="statusOptions" label="Statut :" />
-      <Select v-model="task.role" :options="roleOptions" label="Rôle :" />
+      <Checklist
+        :checklist="task.checklist"
+        :onUpdate="updateChecklist"
+        label="Checklist :"
+      />
+      <div class="modal-selects">
+        <Select
+          v-model="task.status"
+          :options="statusOptions"
+          label="Statut :"
+        />
+        <Select v-model="task.role" :options="roleOptions" label="Rôle :" />
+      </div>
+
       <Input v-model="task.date" type="date" label="Date d'échéance :" />
       <BaseButton content="Créer la tâche" :action="saveTask" variant="cta" />
     </Modal>
@@ -178,6 +189,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   flex-direction: column;
   align-items: center;
   margin-top: 2rem;
+  margin-bottom: 8rem;
 }
 
 .kanbanButtons {
@@ -191,6 +203,8 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  margin-top: 20px;
+  margin-top: 2rem;
+  gap: 2rem;
+  overflow-x: auto;
 }
 </style>
