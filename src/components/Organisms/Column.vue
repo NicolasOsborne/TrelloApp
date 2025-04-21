@@ -23,26 +23,11 @@ const isDeleteColumnModalOpen = ref(false)
 
 const columnNewName = ref('')
 
-const columnClass = (status: string) => {
-  switch (status) {
-    case 'À Faire':
-      return 'column-toDo'
-    case 'En Cours':
-      return 'column-inProgress'
-    case 'À Approuver':
-      return 'column-toApprove'
-    case 'Terminé':
-      return 'column-done'
-    default:
-      return 'column-new'
-  }
-}
-
 const columnColor = computed(() => {
   const column = columnStoreInstance.columns.find(
     (c) => c.name === props.status
   )
-  return column ? column.color : '#FFFFFF'
+  return column ? column.color : '#fa8181'
 })
 
 const openEditColumnModal = () => {
@@ -75,10 +60,7 @@ const removeColumn = () => {
 
 <template>
   <div class="column">
-    <div
-      :class="columnClass(props.status)"
-      :style="{ backgroundColor: columnColor }"
-    >
+    <div class="column_header" :style="{ backgroundColor: columnColor }">
       <h3>{{ props.status }}</h3>
       <div class="columnButtons">
         <BaseButton
@@ -144,11 +126,7 @@ const removeColumn = () => {
   border: 2px solid $color-black;
   margin-bottom: 5rem;
 
-  &-toDo,
-  &-inProgress,
-  &-toApprove,
-  &-done,
-  &-new {
+  &_header {
     border-radius: 8px;
     box-shadow: $box-shadow;
     display: flex;
@@ -157,26 +135,6 @@ const removeColumn = () => {
     justify-content: space-between;
     padding: 0 1rem;
   }
-
-  // &-toDo {
-  //   background-color: $color-primary;
-  // }
-
-  // &-inProgress {
-  //   background-color: $color-secondary;
-  // }
-
-  // &-toApprove {
-  //   background-color: $color-tertiary;
-  // }
-
-  // &-done {
-  //   background-color: $color-quarternary;
-  // }
-
-  // &-new {
-  //   background-color: $color-green;
-  // }
 }
 
 .columnButtons {

@@ -187,22 +187,23 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 2rem;
   margin-bottom: 8rem;
+  padding-left: 2rem;
 }
 
 .kanbanButtons {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  gap: 4rem;
+  align-items: flex-start;
+  gap: 2rem;
 }
 .columns {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  align-items: flex-start;
   margin-top: 2rem;
   gap: 2rem;
   overflow-x: auto;
