@@ -3,6 +3,7 @@ defineProps<{
   label: string
   placeholder?: string
   modelValue: string
+  type?: string
 }>()
 
 const emit = defineEmits(['update:modelValue'])
@@ -12,6 +13,7 @@ const emit = defineEmits(['update:modelValue'])
   <div class="input_wrapper">
     <label class="input_label" for="input">{{ label }}</label>
     <input
+      :type="type || 'text'"
       :value="modelValue"
       :placeholder="placeholder"
       name="input"
@@ -36,11 +38,11 @@ const emit = defineEmits(['update:modelValue'])
   }
 
   input {
-    width: 75%;
-    height: 2rem;
+    width: 95%;
+    height: 1rem;
     border-radius: 8px;
     border: 2px solid $color-black;
-    padding: 10px;
+    padding: 0.5rem;
     font-family: $font-body;
     outline: 2px solid transparent;
     transition: all 0.2s ease-in-out;

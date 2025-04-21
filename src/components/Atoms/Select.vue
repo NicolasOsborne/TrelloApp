@@ -45,7 +45,7 @@ const onChange = (event: Event) => {
     width: max-content;
     border-radius: 8px;
     border: 2px solid $color-black;
-    padding: 10px;
+    padding: 0.5rem;
     font-family: $font-body;
     outline: 2px solid transparent;
     transition: all 0.2s ease-in-out;

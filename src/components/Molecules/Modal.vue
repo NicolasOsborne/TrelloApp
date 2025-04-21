@@ -8,13 +8,15 @@ const emit = defineEmits(['close'])
 <template>
   <div v-if="show" class="modal-overlay" @click.self="emit('close')">
     <div class="modal-content">
-      <button class="close-btn" @click="emit('close')">✕</button>
+      <button class="close-btn" @click="emit('close')">
+        <i class="bi bi-x-lg"></i>
+      </button>
       <slot></slot>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -34,12 +36,20 @@ const emit = defineEmits(['close'])
   padding: 2rem;
   border-radius: 8px;
   box-shadow: $box-shadow;
+  border: 2px solid $color-black;
   min-width: 300px;
   max-width: 600px;
+  max-height: 80vh;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.modalTitle {
+  max-width: 350px;
 }
 
 .close-btn {
@@ -50,5 +60,16 @@ const emit = defineEmits(['close'])
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.modal-selects {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-dateSelect {
+  accent-color: $color-green;
 }
 </style>

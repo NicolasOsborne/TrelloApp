@@ -16,12 +16,12 @@ const props = defineProps<{
   </button>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .button {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: $box-shadow;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
@@ -43,7 +43,7 @@ const props = defineProps<{
 
 .card-remove,
 .card-edit {
-  padding: 0.5rem 0.55rem;
+  padding: 0.25rem;
   color: $color-black;
   border: 1px solid $color-black;
 

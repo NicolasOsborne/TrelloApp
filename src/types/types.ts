@@ -5,14 +5,37 @@ export enum TaskStatus {
   done = 'Terminé',
 }
 
+export enum Role {
+  frontend = 'Front-End',
+  backend = 'Back-End',
+  fullStack = 'Full-Stack',
+  designer = 'UX/UI',
+  owner = 'Product Owner',
+  scrum = 'Scrum Master',
+}
+
+export interface ChecklistItem {
+  text: string
+  completed: boolean
+}
+
 export interface Task {
   id: number
   title: string
-  status: TaskStatus
+  checklist: ChecklistItem[]
+  status: string
+  role: Role
+  date: string
 }
 
-export interface List {
+export interface TaskList {
   id: number
   title: string
   tasks: Task[]
+}
+
+export interface Column {
+  id: number
+  name: string
+  color: string
 }
