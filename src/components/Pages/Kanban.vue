@@ -3,7 +3,7 @@ import { columnStore, taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
 import { Role, type ChecklistItem } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
 import Select from '../Atoms/Select.vue'
@@ -55,6 +55,11 @@ const tasksByStatus = computed(() => {
 onMounted(() => {
   taskStoreInstance.loadTasks()
   columnStoreInstance.loadColumns()
+})
+
+onBeforeUnmount(() => {
+  taskStoreInstance.saveTasks()
+  columnStoreInstance.saveColumns()
 })
 
 const openTaskModal = () => {

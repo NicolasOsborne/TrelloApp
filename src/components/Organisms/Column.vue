@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { taskStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
 import type { Task } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
+import Draggable from 'vuedraggable'
 
 const props = defineProps<{ id: number; status: string; tasks: Task[] }>()
 const emit = defineEmits(['removeColumn', 'editColumn'])
@@ -61,6 +62,14 @@ const removeColumn = () => {
   emit('removeColumn', props.id)
   closeDeleteColumnModal()
 }
+
+const onDrop = (event: any) => {
+  const movedTask: Task = event?.item ? event.item._underlying_vm_ : null
+
+  if (movedTask) {
+    store.moveTask(movedTask.id, props.status)
+  }
+}
 </script>
 
 <template>
@@ -81,9 +90,11 @@ const removeColumn = () => {
       </div>
     </div>
 
-    <div class="taskList">
-      <TaskCard v-for="task in tasks" :key="task.id" :task="task" />
-    </div>
+    <Draggable :list="tasks" item-key="id" @change="onDrop">
+      <template #item="{ element }">
+        <TaskCard :task="element" />
+      </template>
+    </Draggable>
   </div>
 
   <Modal :show="isEditColumnModalOpen" @close="closeEditColumnModal">
@@ -119,6 +130,7 @@ const removeColumn = () => {
   background: $color-white;
   margin: 15px;
   width: 250px;
+  height: 400px;
 
   &-toDo,
   &-inProgress,

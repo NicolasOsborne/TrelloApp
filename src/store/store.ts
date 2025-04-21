@@ -32,10 +32,13 @@ export const taskStore = defineStore('taskStore', {
       this.tasks = [...this.tasks, newTask]
       this.saveTasks()
     },
-    moveTask(id: number, newStatus: TaskStatus) {
+    moveTask(id: number, newStatus: string) {
       const taskIndex = this.tasks.findIndex((task) => task.id === id)
       if (taskIndex !== -1) {
-        this.tasks[taskIndex] = { ...this.tasks[taskIndex], status: newStatus }
+        this.tasks[taskIndex] = {
+          ...this.tasks[taskIndex],
+          status: newStatus,
+        }
         this.saveTasks()
       }
     },

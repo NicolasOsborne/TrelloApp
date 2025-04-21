@@ -80,7 +80,7 @@ const saveUpdatedTask = () => {
   isEditTaskModalOpen.value = false
 }
 
-const moveTask = (newStatus: TaskStatus) => {
+const moveTask = (newStatus: string) => {
   store.moveTask(props.task.id, newStatus)
 }
 
@@ -94,7 +94,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
 </script>
 
 <template>
-  <div class="taskCard">
+  <div class="taskCard" :data-id="task.id" v-bind="$attrs">
     <p class="taskCard_title">{{ task.title }}</p>
     <div class="taskCard_content">
       <p class="taskCard_status">{{ task.status }}</p>
