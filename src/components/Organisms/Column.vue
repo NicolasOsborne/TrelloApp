@@ -6,7 +6,6 @@ import type { Task } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
-import Draggable from 'vuedraggable'
 
 const props = defineProps<{ id: number; status: string; tasks: Task[] }>()
 const emit = defineEmits(['removeColumn', 'editColumn'])
@@ -25,7 +24,7 @@ const columnNewName = ref('')
 
 const columnColor = computed(() => {
   const column = columnStoreInstance.columns.find(
-    (c) => c.name === props.status
+    (col) => col.name === props.status
   )
   return column ? column.color : '#fa8181'
 })
@@ -101,7 +100,8 @@ const removeColumn = () => {
     @close="isDeleteColumnModalOpen = false"
   >
     <h3 class="modalTitle">
-      Êtes-vous sûrs de vouloir supprimer cette colonne ?
+      Êtes-vous sûr de vouloir supprimer cette colonne (et toutes les tâches
+      associées) ?
     </h3>
     <BaseButton content="Supprimer" :action="removeColumn" variant="cta" />
     <BaseButton

@@ -48,6 +48,10 @@ const emit = defineEmits(['close'])
   scrollbar-width: none;
 }
 
+.modalTitle {
+  max-width: 350px;
+}
+
 .close-btn {
   position: absolute;
   top: 10px;

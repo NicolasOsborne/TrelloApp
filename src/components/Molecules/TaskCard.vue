@@ -18,6 +18,7 @@ const statusOptions = computed(() => {
   return columnStoreInstance.columns.map((column) => ({
     label: column.name,
     value: column.name,
+    color: column.color,
   }))
 })
 
@@ -60,6 +61,18 @@ const checklistProgress = computed(() => {
   const completed = props.task.checklist.filter((item) => item.completed).length
   return `${completed}/${total}`
 })
+
+const isStatusDropdownOpen = ref(false)
+
+const toggleStatusDropdown = () => {
+  isStatusDropdownOpen.value = !isStatusDropdownOpen.value
+}
+
+const selectStatus = (status: string) => {
+  editedStatus.value = status
+  store.moveTask(props.task.id, status)
+  isStatusDropdownOpen.value = false
+}
 
 const openEditTaskModal = () => {
   editedTitle.value = props.task.title
@@ -110,6 +123,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
       <div
         class="taskCard_header-status"
         :style="{ backgroundColor: statusColor }"
+        @click="toggleStatusDropdown"
       >
         {{ task.status }}
       </div>
@@ -126,6 +140,19 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
         />
       </div>
     </div>
+
+    <div v-if="isStatusDropdownOpen" class="taskCard_header-status-dropdown">
+      <div
+        v-for="status in statusOptions"
+        :key="status.value"
+        class="taskCard_header-status-option"
+        :style="{ backgroundColor: status.color }"
+        @click="selectStatus(status.value)"
+      >
+        {{ status.label }}
+      </div>
+    </div>
+
     <p class="taskCard_title">{{ task.title }}</p>
     <div class="taskCard_info">
       <div class="taskCard_info-progress">
@@ -170,9 +197,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   </Modal>
 
   <Modal :show="isDeleteTaskModalOpen" @close="isDeleteTaskModalOpen = false">
-    <h3 class="modalTitle">
-      Êtes-vous sûrs de vouloir supprimer cette tâche ?
-    </h3>
+    <h3 class="modalTitle">Êtes-vous sûr de vouloir supprimer cette tâche ?</h3>
     <BaseButton content="Supprimer" :action="removeTask" variant="cta" />
     <BaseButton
       content="Annuler"
@@ -204,7 +229,44 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
       padding: 0.25rem 0.5rem;
       border: 1px solid $color-black;
       border-radius: 4px;
+      box-shadow: $box-shadow;
       font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        transform: translate($box-shadow-x, $box-shadow-y);
+        box-shadow: none;
+      }
+
+      &-dropdown {
+        position: absolute;
+        background-color: $color-background;
+        padding: 0.75rem;
+        border: 2px solid $color-black;
+        border-radius: 8px;
+        box-shadow: $box-shadow;
+        z-index: 10;
+        margin-top: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      &-option {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid $color-black;
+        border-radius: 4px;
+        box-shadow: $box-shadow;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          transform: translate($box-shadow-x, $box-shadow-y);
+          box-shadow: none;
+        }
+      }
     }
 
     &-actions {
@@ -229,30 +291,32 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
 
     &-progress {
       padding: 0.5rem;
-      border: 1px solid $color-black;
+      border: 2px solid $color-black;
       border-radius: 4px;
       background-color: $color-green;
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 0.5rem;
+      font-weight: 600;
     }
 
     &-date {
       padding: 0.5rem;
-      border: 1px solid $color-black;
+      border: 2px solid $color-black;
       border-radius: 4px;
       background-color: $color-tertiary;
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 0.5rem;
+      font-weight: 600;
     }
 
     &-role {
       padding: 0.5rem;
       border-radius: 99%;
-      border: 1px solid $color-black;
+      border: 2px solid $color-black;
       background-color: $color-secondary;
       font-weight: 600;
     }
