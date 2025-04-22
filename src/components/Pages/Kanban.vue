@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { columnStore, taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
-import { Role, type ChecklistItem, type Task } from '../../types/types'
+import { Role, roleInfo, TaskStatus, type Task } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
-import Input from '../Atoms/Input.vue'
-import Select from '../Atoms/Select.vue'
+import CustomInput from '../Atoms/CustomInput.vue'
+import CustomSelect from '../Atoms/CustomSelect.vue'
 import Checklist from '../Molecules/Checklist.vue'
 
 const taskStoreInstance = taskStore()
@@ -18,7 +18,7 @@ const isColumnModalOpen = ref(false)
 const task = ref<Omit<Task, 'id'>>({
   title: '',
   checklist: [],
-  status: '',
+  status: TaskStatus.toDo,
   role: Role.frontend,
   date: '',
 })
@@ -29,12 +29,14 @@ const statusOptions = computed(() => {
   return columnStoreInstance.columns.map((column) => ({
     label: column.name,
     value: column.name,
+    color: column.color,
   }))
 })
 
 const roleOptions = Object.values(Role).map((role) => ({
   label: role,
   value: role,
+  color: roleInfo[role].color,
 }))
 
 onMounted(() => {
@@ -87,7 +89,7 @@ const saveColumn = () => {
 
     <Modal :show="isTaskModalOpen" @close="isTaskModalOpen = false">
       <h3 class="modalTitle">Nouvelle tâche :</h3>
-      <Input
+      <CustomInput
         v-model="task.title"
         label="Titre :"
         placeholder="Titre de la nouvelle tâche..."
@@ -98,21 +100,25 @@ const saveColumn = () => {
         label="Checklist :"
       />
       <div class="modal-selects">
-        <Select
+        <CustomSelect
           v-model="task.status"
           :options="statusOptions"
           label="Statut :"
         />
-        <Select v-model="task.role" :options="roleOptions" label="Rôle :" />
+        <CustomSelect
+          v-model="task.role"
+          :options="roleOptions"
+          label="Rôle :"
+        />
       </div>
 
-      <Input v-model="task.date" type="date" label="Date d'échéance :" />
+      <CustomInput v-model="task.date" type="date" label="Date d'échéance :" />
       <BaseButton content="Créer la tâche" :action="saveTask" variant="cta" />
     </Modal>
 
     <Modal :show="isColumnModalOpen" @close="isColumnModalOpen = false">
       <h3 class="modalTitle">Nouvelle colonne :</h3>
-      <Input
+      <CustomInput
         v-model="newColumnName"
         label="Nom de la colonne :"
         placeholder="Nom de la nouvelle colonne..."

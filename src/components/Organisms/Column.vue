@@ -4,7 +4,7 @@ import { columnStore, taskStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Modal from '../Molecules/Modal.vue'
-import Input from '../Atoms/Input.vue'
+import CustomInput from '../Atoms/CustomInput.vue'
 
 const props = defineProps<{ id: number }>()
 const emit = defineEmits(['removeColumn', 'editColumn'])
@@ -77,7 +77,7 @@ const removeColumn = () => {
 
   <Modal :show="isEditColumnModalOpen" @close="isEditColumnModalOpen = false">
     <h3 class="modalTitle">Modifier la colonne :</h3>
-    <Input v-model="columnNewName" label="Nom de la colonne :" />
+    <CustomInput v-model="columnNewName" label="Nom de la colonne :" />
     <BaseButton
       content="Mettre à jour la colonne"
       :action="editColumn"
