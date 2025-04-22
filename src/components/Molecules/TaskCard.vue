@@ -213,10 +213,4 @@ const checklistProgress = computed(() => {
     }
   }
 }
-
-// select {
-//   padding: 5px;
-//   border-radius: 4px;
-//   width: max-content;
-// }
 </style>
