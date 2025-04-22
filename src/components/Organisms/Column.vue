@@ -2,19 +2,26 @@
 import { computed, ref } from 'vue'
 import { columnStore, taskStore } from '../../store/store'
 import TaskCard from '../Molecules/TaskCard.vue'
-import type { Task } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Modal from '../Molecules/Modal.vue'
 import Input from '../Atoms/Input.vue'
 
-const props = defineProps<{ id: number; status: string; tasks: Task[] }>()
+const props = defineProps<{ id: number }>()
 const emit = defineEmits(['removeColumn', 'editColumn'])
 
 const taskStoreInstance = taskStore()
 const columnStoreInstance = columnStore()
 
+const column = computed(
+  () =>
+    columnStoreInstance.columnById(props.id) || {
+      id: 0,
+      name: '',
+      color: '#fa8181',
+    }
+)
 const tasks = computed(() =>
-  taskStoreInstance.tasks.filter((task: any) => task.status === props.status)
+  taskStoreInstance.tasksByStatus(column.value?.name || '')
 )
 
 const isEditColumnModalOpen = ref(false)
@@ -22,45 +29,28 @@ const isDeleteColumnModalOpen = ref(false)
 
 const columnNewName = ref('')
 
-const columnColor = computed(() => {
-  const column = columnStoreInstance.columns.find(
-    (col) => col.name === props.status
-  )
-  return column ? column.color : '#fa8181'
-})
-
 const openEditColumnModal = () => {
-  columnNewName.value = props.status
+  columnNewName.value = column.value?.name || ''
   isEditColumnModalOpen.value = true
 }
 
-const closeEditColumnModal = () => {
-  isEditColumnModalOpen.value = false
-}
-
-const openDeleteColumnModal = () => {
-  isDeleteColumnModalOpen.value = true
-}
-
-const closeDeleteColumnModal = () => {
-  isDeleteColumnModalOpen.value = false
-}
-
 const editColumn = () => {
-  emit('editColumn', { id: props.id, newName: columnNewName.value })
-  closeEditColumnModal()
+  if (columnNewName.value.trim() !== '') {
+    emit('editColumn', { id: props.id, newName: columnNewName.value })
+    isEditColumnModalOpen.value = false
+  }
 }
 
 const removeColumn = () => {
   emit('removeColumn', props.id)
-  closeDeleteColumnModal()
+  isDeleteColumnModalOpen.value = false
 }
 </script>
 
 <template>
   <div class="column">
-    <div class="column_header" :style="{ backgroundColor: columnColor }">
-      <h3>{{ props.status }}</h3>
+    <div class="column_header" :style="{ backgroundColor: column.color }">
+      <h3>{{ column.name }}</h3>
       <div class="columnButtons">
         <BaseButton
           icon="bi bi-pen"
@@ -69,7 +59,7 @@ const removeColumn = () => {
         />
         <BaseButton
           icon="bi bi-trash"
-          :action="openDeleteColumnModal"
+          :action="() => (isDeleteColumnModalOpen = true)"
           variant="card-remove"
         />
       </div>
@@ -80,12 +70,12 @@ const removeColumn = () => {
         v-for="task in tasks"
         :key="task.id"
         :task="task"
-        :statusColor="columnColor"
+        :statusColor="column.color"
       />
     </div>
   </div>
 
-  <Modal :show="isEditColumnModalOpen" @close="closeEditColumnModal">
+  <Modal :show="isEditColumnModalOpen" @close="isEditColumnModalOpen = false">
     <h3 class="modalTitle">Modifier la colonne :</h3>
     <Input v-model="columnNewName" label="Nom de la colonne :" />
     <BaseButton
@@ -106,7 +96,7 @@ const removeColumn = () => {
     <BaseButton content="Supprimer" :action="removeColumn" variant="cta" />
     <BaseButton
       content="Annuler"
-      :action="closeDeleteColumnModal"
+      :action="() => (isDeleteColumnModalOpen = false)"
       variant="cta"
     />
   </Modal>

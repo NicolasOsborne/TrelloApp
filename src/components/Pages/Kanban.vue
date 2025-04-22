@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { columnStore, taskStore } from '../../store/store'
 import Column from '../Organisms/Column.vue'
-import { Role, type ChecklistItem } from '../../types/types'
+import { Role, type ChecklistItem, type Task } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Modal from '../Molecules/Modal.vue'
@@ -15,13 +15,7 @@ const columnStoreInstance = columnStore()
 const isTaskModalOpen = ref(false)
 const isColumnModalOpen = ref(false)
 
-const task = ref<{
-  title: string
-  checklist: ChecklistItem[]
-  status: string
-  role: Role
-  date: string
-}>({
+const task = ref<Omit<Task, 'id'>>({
   title: '',
   checklist: [],
   status: '',
@@ -43,15 +37,6 @@ const roleOptions = Object.values(Role).map((role) => ({
   value: role,
 }))
 
-const tasksByStatus = computed(() => {
-  return columnStoreInstance.columns.map((column) => ({
-    status: column.name,
-    tasks: taskStoreInstance.tasks.filter(
-      (task) => task.status === column.name
-    ),
-  }))
-})
-
 onMounted(() => {
   taskStoreInstance.loadTasks()
   columnStoreInstance.loadColumns()
@@ -62,23 +47,9 @@ onBeforeUnmount(() => {
   columnStoreInstance.saveColumns()
 })
 
-const openTaskModal = () => {
-  isTaskModalOpen.value = true
-}
-
-const openColumnModal = () => {
-  isColumnModalOpen.value = true
-}
-
 const saveTask = () => {
   if (task.value.title.trim() !== '' && task.value.status) {
-    taskStoreInstance.addTask(
-      task.value.title,
-      task.value.checklist,
-      task.value.status,
-      task.value.role,
-      task.value.date
-    )
+    taskStoreInstance.addTask(task.value)
     task.value = {
       title: '',
       checklist: [],
@@ -97,18 +68,6 @@ const saveColumn = () => {
     isColumnModalOpen.value = false
   }
 }
-
-const removeColumn = (id: number) => {
-  columnStoreInstance.removeColumn(id)
-}
-
-const editColumn = ({ id, newName }: { id: number; newName: string }) => {
-  columnStoreInstance.updateColumn(id, newName)
-}
-
-const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
-  task.value.checklist = updatedChecklist
-}
 </script>
 
 <template>
@@ -116,12 +75,12 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
     <div class="kanbanButtons">
       <BaseButton
         content="Nouvelle tâche"
-        :action="openTaskModal"
+        :action="() => (isTaskModalOpen = true)"
         variant="cta"
       />
       <BaseButton
         content="Nouvelle colonne"
-        :action="openColumnModal"
+        :action="() => (isColumnModalOpen = true)"
         variant="cta"
       />
     </div>
@@ -135,7 +94,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
       />
       <Checklist
         :checklist="task.checklist"
-        :onUpdate="updateChecklist"
+        :onUpdate="(updatedChecklist) => (task.checklist = updatedChecklist)"
         label="Checklist :"
       />
       <div class="modal-selects">
@@ -170,13 +129,6 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
         v-for="column in columnStoreInstance.columns"
         :key="column.id"
         :id="column.id"
-        :status="column.name"
-        :tasks="
-          tasksByStatus.find((taskGroup) => taskGroup.status === column.name)
-            ?.tasks || []
-        "
-        @removeColumn="removeColumn(column.id)"
-        @editColumn="editColumn"
       />
     </div>
   </section>
@@ -190,7 +142,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   align-items: flex-start;
   margin-top: 2rem;
   margin-bottom: 8rem;
-  padding-left: 2rem;
+  padding: 0 2rem;
 }
 
 .kanbanButtons {
@@ -207,5 +159,6 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   margin-top: 2rem;
   gap: 2rem;
   overflow-x: auto;
+  scrollbar-width: none;
 }
 </style>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { columnStore, taskStore } from '../../store/store'
-import type { ChecklistItem, Task } from '../../types/types'
-import { Role } from '../../types/types'
+import type { Task } from '../../types/types'
+import { Role, roleInfo } from '../../types/types'
 import BaseButton from '../Atoms/BaseButton.vue'
 import Select from '../Atoms/Select.vue'
 import Modal from './Modal.vue'
@@ -10,8 +10,8 @@ import Input from '../Atoms/Input.vue'
 import Checklist from './Checklist.vue'
 
 const props = defineProps<{ task: Task; statusColor: string }>()
-const store = taskStore()
 
+const taskStoreInstance = taskStore()
 const columnStoreInstance = columnStore()
 
 const statusOptions = computed(() => {
@@ -29,25 +29,21 @@ const roleOptions = roles.map((role) => ({
   value: role,
 }))
 
-const roleStyles = {
-  [Role.frontend]: { initials: 'FE', color: '#a9a2ff' },
-  [Role.backend]: { initials: 'BA', color: '#ff9ab0' },
-  [Role.fullStack]: { initials: 'FS', color: '#ffa2fa' },
-  [Role.designer]: { initials: 'UX', color: '#fa8181' },
-  [Role.owner]: { initials: 'PO', color: '#b9ff80' },
-  [Role.scrum]: { initials: 'SM', color: '#72f5e3' },
-}
-
-const roleStyle = computed(() => roleStyles[props.task.role])
+const roleStyle = computed(() => roleInfo[props.task.role])
 
 const isEditTaskModalOpen = ref(false)
 const isDeleteTaskModalOpen = ref(false)
 
-const editedTitle = ref(props.task.title)
-const editedChecklist = ref<ChecklistItem[]>(props.task.checklist)
-const editedStatus = ref(props.task.status)
-const editedRole = ref(props.task.role)
-const editedDate = ref(props.task.date)
+const editedTask = ref({ ...props.task })
+
+const saveUpdatedTask = () => {
+  taskStoreInstance.updateTask(editedTask.value)
+  isEditTaskModalOpen.value = false
+}
+
+const removeTask = () => {
+  taskStoreInstance.removeTask(props.task.id)
+}
 
 const daysRemaining = () => {
   const today = new Date()
@@ -69,47 +65,9 @@ const toggleStatusDropdown = () => {
 }
 
 const selectStatus = (status: string) => {
-  editedStatus.value = status
-  store.moveTask(props.task.id, status)
+  editedTask.value.status = status
+  taskStoreInstance.moveTask(props.task.id, status)
   isStatusDropdownOpen.value = false
-}
-
-const openEditTaskModal = () => {
-  editedTitle.value = props.task.title
-  editedChecklist.value = props.task.checklist
-  editedStatus.value = props.task.status
-  editedRole.value = props.task.role
-  editedDate.value = props.task.date
-
-  isEditTaskModalOpen.value = true
-}
-
-const openDeleteTaskModal = () => {
-  isDeleteTaskModalOpen.value = true
-}
-
-const closeDeleteTaskModal = () => {
-  isDeleteTaskModalOpen.value = false
-}
-
-const saveUpdatedTask = () => {
-  store.updateTask(
-    props.task.id,
-    editedTitle.value,
-    editedChecklist.value,
-    editedStatus.value,
-    editedRole.value,
-    editedDate.value
-  )
-  isEditTaskModalOpen.value = false
-}
-
-const removeTask = () => {
-  store.removeTask(props.task.id)
-}
-
-const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
-  editedChecklist.value = updatedChecklist
 }
 </script>
 
@@ -126,12 +84,12 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
       <div class="taskCard_header-actions">
         <BaseButton
           icon="bi bi-pen"
-          :action="openEditTaskModal"
+          :action="() => (isEditTaskModalOpen = true)"
           variant="card-edit"
         />
         <BaseButton
           icon="bi bi-trash"
-          :action="openDeleteTaskModal"
+          :action="() => (isDeleteTaskModalOpen = true)"
           variant="card-remove"
         />
       </div>
@@ -169,22 +127,24 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
   </div>
   <Modal :show="isEditTaskModalOpen" @close="isEditTaskModalOpen = false">
     <h3 class="modalTitle">Modifier la tâche :</h3>
-    <Input v-model="editedTitle" label="Titre :" />
+    <Input v-model="editedTask.title" label="Titre :" />
     <Checklist
-      :checklist="editedChecklist"
-      :onUpdate="updateChecklist"
+      :checklist="editedTask.checklist"
+      :onUpdate="
+        (updatedChecklist) => (editedTask.checklist = updatedChecklist)
+      "
       label="Checklist :"
     />
     <div class="modal-selects">
       <Select
-        v-model="editedStatus"
+        v-model="editedTask.status"
         :options="statusOptions"
         label="Statut :"
       />
-      <Select v-model="editedRole" :options="roleOptions" label="Rôle :" />
+      <Select v-model="editedTask.role" :options="roleOptions" label="Rôle :" />
     </div>
     <Input
-      v-model="editedDate"
+      v-model="editedTask.date"
       type="date"
       label="Date d'échéance :"
       class="modal-dateSelect"
@@ -197,7 +157,7 @@ const updateChecklist = (updatedChecklist: ChecklistItem[]) => {
     <BaseButton content="Supprimer" :action="removeTask" variant="cta" />
     <BaseButton
       content="Annuler"
-      :action="closeDeleteTaskModal"
+      :action="() => (isDeleteTaskModalOpen = false)"
       variant="cta"
     />
   </Modal>
