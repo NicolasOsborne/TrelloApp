@@ -136,7 +136,10 @@ const saveColumn = () => {
         :key="column.id"
         :id="column.id"
         @removeColumn="columnStoreInstance.removeColumn"
-        @editColumn="columnStoreInstance.updateColumn"
+        @editColumn="
+          (payload) =>
+            columnStoreInstance.updateColumn(payload.id, payload.newName)
+        "
       />
     </div>
   </section>
