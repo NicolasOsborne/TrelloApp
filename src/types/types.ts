@@ -21,7 +21,6 @@ export enum Role {
   fullStack = 'Full-Stack',
   designer = 'UX/UI',
   owner = 'Product Owner',
-  scrum = 'Scrum Master',
 }
 
 export const roleInfo = {
@@ -30,7 +29,6 @@ export const roleInfo = {
   [Role.fullStack]: { initials: 'FS', color: colors[5] },
   [Role.designer]: { initials: 'UX', color: colors[0] },
   [Role.owner]: { initials: 'PO', color: colors[2] },
-  [Role.scrum]: { initials: 'SM', color: colors[3] },
 }
 
 export interface ChecklistItem {
