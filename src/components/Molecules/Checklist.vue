@@ -38,12 +38,14 @@ const removeItem = (index: number) => {
       </button>
     </div>
     <div v-for="(item, index) in checklist" :key="index" class="checklist_item">
-      <input
-        type="checkbox"
-        v-model="item.completed"
-        class="checklist_item-checkbox"
-      />
-      <span :class="{ completed: item.completed }">{{ item.text }}</span>
+      <div class="checklist_item-input">
+        <input
+          type="checkbox"
+          v-model="item.completed"
+          class="checklist_item-checkbox"
+        />
+        <span :class="{ completed: item.completed }">{{ item.text }}</span>
+      </div>
       <button @click="removeItem(index)" class="button checklist_item-remove">
         <i class="bi bi-x-lg"></i>
       </button>
@@ -98,6 +100,8 @@ const removeItem = (index: number) => {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
 
     &-remove {
       margin-left: 1rem;
@@ -110,8 +114,16 @@ const removeItem = (index: number) => {
       }
     }
 
+    &-input {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
     &-checkbox {
       accent-color: $color-green;
+      width: max-content;
+      margin-right: 0.5rem;
     }
 
     .completed {

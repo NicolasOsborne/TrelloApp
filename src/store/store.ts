@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia'
-import {
-  Role,
-  type ChecklistItem,
-  type Column,
-  type Task,
-} from '../types/types'
+import { colors, type Column, type Task } from '../types/types'
 
 export const taskStore = defineStore('taskStore', {
   state: () => ({
@@ -20,14 +15,8 @@ export const taskStore = defineStore('taskStore', {
     saveTasks() {
       localStorage.setItem('tasks', JSON.stringify(this.tasks))
     },
-    addTask(
-      title: string,
-      checklist: ChecklistItem[],
-      status: string,
-      role: Role,
-      date: string
-    ) {
-      const newTask = { id: Date.now(), title, checklist, status, role, date }
+    addTask(task: Omit<Task, 'id'>) {
+      const newTask = { id: Date.now(), ...task }
       this.tasks = [...this.tasks, newTask]
       this.saveTasks()
     },
@@ -45,26 +34,19 @@ export const taskStore = defineStore('taskStore', {
       this.tasks = this.tasks.filter((task) => task.id !== id)
       this.saveTasks()
     },
-    updateTask(
-      id: number,
-      title: string,
-      checklist: ChecklistItem[],
-      status: string,
-      role: Role,
-      date: string
-    ) {
-      const taskIndex = this.tasks.findIndex((task) => task.id === id)
+    updateTask(updatedTask: Task) {
+      const taskIndex = this.tasks.findIndex(
+        (task) => task.id === updatedTask.id
+      )
       if (taskIndex !== -1) {
-        this.tasks[taskIndex] = {
-          ...this.tasks[taskIndex],
-          title,
-          checklist,
-          status,
-          role,
-          date,
-        }
+        this.tasks[taskIndex] = updatedTask
         this.saveTasks()
       }
+    },
+  },
+  getters: {
+    tasksByStatus: (state) => (status: string) => {
+      return state.tasks.filter((task) => task.status === status)
     },
   },
 })
@@ -80,10 +62,10 @@ export const columnStore = defineStore('columnStore', {
         this.columns = JSON.parse(storedColumns)
       } else {
         this.columns = [
-          { id: Date.now(), name: 'À Faire', color: '#fa8181' },
-          { id: Date.now() + 1, name: 'En Cours', color: '#ffc527' },
-          { id: Date.now() + 2, name: 'À Approuver', color: '#b9ff80' },
-          { id: Date.now() + 3, name: 'Terminé', color: '#72f5e3' },
+          { id: Date.now(), name: 'À Faire', color: colors[0] },
+          { id: Date.now() + 1, name: 'En Cours', color: colors[1] },
+          { id: Date.now() + 2, name: 'À Approuver', color: colors[2] },
+          { id: Date.now() + 3, name: 'Terminé', color: colors[3] },
         ]
         this.saveColumns()
       }
@@ -92,10 +74,11 @@ export const columnStore = defineStore('columnStore', {
       localStorage.setItem('columns', JSON.stringify(this.columns))
     },
     addColumn(columnName: string) {
+      const randomIndex = Math.floor(Math.random() * colors.length)
       const newColumn = {
         id: Date.now(),
         name: columnName,
-        color: getRandomColor(),
+        color: colors[randomIndex],
       }
       this.columns.push(newColumn)
       this.saveColumns()
@@ -120,19 +103,13 @@ export const columnStore = defineStore('columnStore', {
       }
     },
   },
+  getters: {
+    columnById: (state) => (id: number) => {
+      return state.columns.find((column) => column.id === id)
+    },
+    getColumnColor: (state) => (name: string) => {
+      const column = state.columns.find((col) => col.name === name)
+      return column ? column.color : '#fa8181'
+    },
+  },
 })
-
-const colors = [
-  '#fa8181',
-  '#ffc527',
-  '#b9ff80',
-  '#72f5e3',
-  '#a9a2ff',
-  '#ffa2fa',
-  '#ff9ab0',
-]
-
-const getRandomColor = () => {
-  const randomIndex = Math.floor(Math.random() * colors.length)
-  return colors[randomIndex]
-}

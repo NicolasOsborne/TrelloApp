@@ -1,3 +1,13 @@
+export const colors = [
+  '#fa8181',
+  '#ffc527',
+  '#b9ff80',
+  '#72f5e3',
+  '#a9a2ff',
+  '#ffa2fa',
+  '#ff9ab0',
+]
+
 export enum TaskStatus {
   toDo = 'À Faire',
   inProgress = 'En Cours',
@@ -12,6 +22,15 @@ export enum Role {
   designer = 'UX/UI',
   owner = 'Product Owner',
   scrum = 'Scrum Master',
+}
+
+export const roleInfo = {
+  [Role.frontend]: { initials: 'FE', color: colors[4] },
+  [Role.backend]: { initials: 'BA', color: colors[6] },
+  [Role.fullStack]: { initials: 'FS', color: colors[5] },
+  [Role.designer]: { initials: 'UX', color: colors[0] },
+  [Role.owner]: { initials: 'PO', color: colors[2] },
+  [Role.scrum]: { initials: 'SM', color: colors[3] },
 }
 
 export interface ChecklistItem {
