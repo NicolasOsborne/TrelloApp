@@ -135,6 +135,8 @@ const saveColumn = () => {
         v-for="column in columnStoreInstance.columns"
         :key="column.id"
         :id="column.id"
+        @removeColumn="columnStoreInstance.removeColumn"
+        @editColumn="columnStoreInstance.updateColumn"
       />
     </div>
   </section>
