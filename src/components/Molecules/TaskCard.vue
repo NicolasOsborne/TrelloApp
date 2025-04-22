@@ -104,10 +104,6 @@ const saveUpdatedTask = () => {
   isEditTaskModalOpen.value = false
 }
 
-const moveTask = (newStatus: string) => {
-  store.moveTask(props.task.id, newStatus)
-}
-
 const removeTask = () => {
   store.removeTask(props.task.id)
 }
