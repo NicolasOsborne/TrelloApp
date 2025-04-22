@@ -58,6 +58,10 @@ const checklistProgress = computed(() => {
   const completed = props.task.checklist.filter((item) => item.completed).length
   return `${completed}/${total}`
 })
+
+const getRoleAbbreviation = (role: Role) => {
+  return role.slice(0, 2).toUpperCase()
+}
 </script>
 
 <template>
@@ -96,7 +100,7 @@ const checklistProgress = computed(() => {
         class="taskCard_info-role"
         :style="{ backgroundColor: roleStyle.color }"
       >
-        {{ roleStyle.initials }}
+        {{ getRoleAbbreviation(task.role) }}
       </div>
     </div>
   </div>

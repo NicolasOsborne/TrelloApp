@@ -19,16 +19,16 @@ export enum Role {
   frontend = 'Front-End',
   backend = 'Back-End',
   fullStack = 'Full-Stack',
-  designer = 'UX/UI',
+  designer = 'UX',
   owner = 'Product Owner',
 }
 
 export const roleInfo = {
-  [Role.frontend]: { initials: 'FE', color: colors[4] },
-  [Role.backend]: { initials: 'BA', color: colors[6] },
-  [Role.fullStack]: { initials: 'FS', color: colors[5] },
-  [Role.designer]: { initials: 'UX', color: colors[0] },
-  [Role.owner]: { initials: 'PO', color: colors[2] },
+  [Role.frontend]: { color: colors[4] },
+  [Role.backend]: { color: colors[6] },
+  [Role.fullStack]: { color: colors[5] },
+  [Role.designer]: { color: colors[0] },
+  [Role.owner]: { color: colors[2] },
 }
 
 export interface ChecklistItem {
